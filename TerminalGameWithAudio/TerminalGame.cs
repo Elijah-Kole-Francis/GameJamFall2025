@@ -5,6 +5,16 @@ namespace MohawkTerminalGame
     public class TerminalGame
     {
         // Place your variables here
+        // PLAYER
+        int playerCurrentHealth = 100;
+        int playerMaxHealth = 100;
+        float playerHitPercentage = 0.75f;
+
+        // ENEMY
+        int enemyCurrentHealth = 10;
+        int enemyMaxHealth = 10;
+        float enemyHitPercentage = 0.75f;
+
 
         /// Run once before Execute begins
         public void Setup()
@@ -31,7 +41,57 @@ namespace MohawkTerminalGame
         //               Code must finish within the alloted time frame for this to work well.
         public void Execute()
         {
-            
+            PrintPlayerText();
+            PrintEnemyText();
+            PrintOptionsText();
+            Terminal.ReadAndClearLine();
+            Terminal.Clear();
+
         }
+
+        void PrintPlayerText()
+        {
+            Terminal.WriteLine("PLAYER:\n" +
+                $"\tHealth: {HealthDisplayText(playerCurrentHealth, playerMaxHealth)}\n" +
+                $"\tHit %: {playerHitPercentage * 100}%\n" +
+                "\n");
+
+        }
+
+        void PrintEnemyText()
+        {
+            Terminal.WriteLine("ENEMY:\n" +
+                $"\tHealth: {HealthDisplayText(enemyCurrentHealth, enemyMaxHealth)}\n" +
+                $"\tHit %: {enemyHitPercentage * 100}%\n" +
+                "\n");
+
+        }
+
+        void PrintOptionsText()
+        {
+            Terminal.WriteLine("PLAYER OPTIONS:\n" +
+                $"\tOption 1\n" +
+                $"\tOption 2\n" +
+                $"\tOption 3\n" +
+                $"\tOption 4\n" +
+                "\n");
+        }
+
+        private string HealthDisplayText(int health, int maxHealth)
+        {
+            string returnText = "";
+            float healthPercentage = (float)health / (float)maxHealth;
+            int healthIndex = (int)(healthPercentage * 10);
+            int dashesAdded = 0;
+
+            while (dashesAdded <= 10)
+            {
+                returnText += dashesAdded == healthIndex ? $"{(int)(healthPercentage * 100)}%" : "-";
+                dashesAdded++;
+            }
+
+            return $"[{returnText}]";
+        }
+        
     }
 }
