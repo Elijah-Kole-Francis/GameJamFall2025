@@ -5,13 +5,18 @@ namespace MohawkTerminalGame
 {
     public class TerminalGame
     {
-        // Place your variables here
+        
         // PLAYER
         Player player = new Player("PLAYER", 100, 20, 0.75f, 20);
 
         // ENEMY
-        Entity enemy = new Entity("ENEMY", 100, 20, 0.75f);
-
+        Entity[] Enemies = {
+            new Entity("ENEMY 1", 25, 10, 0.5f),   
+            new Entity("ENEMY 2", 50, 20, 0.75f),   
+            new Entity("ENEMY 3", 100, 30, 1f),
+        };
+        
+        int currentEnemyIndex = 0;
 
        
         /// Run once before Execute begins
@@ -70,8 +75,8 @@ namespace MohawkTerminalGame
 
         void PrintEnemyText()
         {
-
-            string enemyhealthBar = HealthDisplayText(enemy.currentHealth, enemy.maxHealth);
+            Entity currentEnemy = Enemies[currentEnemyIndex];
+            string enemyhealthBar = HealthDisplayText(currentEnemy.currentHealth, currentEnemy.maxHealth);
 
             string[] parts = enemyhealthBar.Split('|');
             if (parts.Length == 2)
@@ -88,7 +93,7 @@ namespace MohawkTerminalGame
                     $"\tHealth: {enemyhealthBar}");
             }
 
-            Terminal.WriteLine($"\tHit %: {enemy.hitPercentage * 100}%\n", ConsoleColor.Red, ConsoleColor.Black);
+            Terminal.WriteLine($"\tHit %: {currentEnemy.hitPercentage * 100}%\n", ConsoleColor.Red, ConsoleColor.Black);
             Terminal.WriteLine("", ConsoleColor.Black, ConsoleColor.Black);
         }
 
@@ -104,7 +109,7 @@ namespace MohawkTerminalGame
 
         private string HealthDisplayText(int health, int maxHealth)
         {
-            float healthPercentage = (float)health / maxHealth;
+            float healthPercentage = (float)(health / maxHealth);
             int totalBars = 10;
             int filledBars = (int)(healthPercentage * totalBars);
             int emptyBars = totalBars - filledBars;
