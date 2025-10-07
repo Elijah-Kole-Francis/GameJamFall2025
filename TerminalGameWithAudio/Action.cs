@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TerminalGameWithAudio
 {
-    class Action
+    public class Action
     {
         String[] aliases;
         

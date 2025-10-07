@@ -1,4 +1,5 @@
 ﻿using System;
+using TerminalGameWithAudio;
 
 namespace MohawkTerminalGame
 {
@@ -6,14 +7,11 @@ namespace MohawkTerminalGame
     {
         // Place your variables here
         // PLAYER
-        int playerCurrentHealth = 100;
-        int playerMaxHealth = 100;
-        float playerHitPercentage = 0.75f;
+        Player player = new Player("PLAYER", 100, 20, 0.75f, 20);
 
         // ENEMY
-        int enemyCurrentHealth = 10;
-        int enemyMaxHealth = 10;
-        float enemyHitPercentage = 0.75f;
+        Entity enemy = new Entity("ENEMY", 100, 20, 0.75f);
+
 
 
         /// Run once before Execute begins
@@ -52,8 +50,9 @@ namespace MohawkTerminalGame
         void PrintPlayerText()
         {
             Terminal.WriteLine("PLAYER:\n" +
-                $"\tHealth: {HealthDisplayText(playerCurrentHealth, playerMaxHealth)}\n" +
-                $"\tHit %: {playerHitPercentage * 100}%\n" +
+                $"\tHealth: {HealthDisplayText(player.currentHealth, player.maxHealth)}\n" +
+                $"\tArmour: {HealthDisplayText(player.currentArmour, player.maxArmour)}\n" +
+                $"\tHit %: {player.hitPercentage * 100}%\n" +
                 "\n");
 
         }
@@ -61,8 +60,8 @@ namespace MohawkTerminalGame
         void PrintEnemyText()
         {
             Terminal.WriteLine("ENEMY:\n" +
-                $"\tHealth: {HealthDisplayText(enemyCurrentHealth, enemyMaxHealth)}\n" +
-                $"\tHit %: {enemyHitPercentage * 100}%\n" +
+                $"\tHealth: {HealthDisplayText(enemy.currentHealth, enemy.maxHealth)}\n" +
+                $"\tHit %: {enemy.hitPercentage * 100}%\n" +
                 "\n");
 
         }
