@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using TerminalGameWithAudio;
 
 namespace MohawkTerminalGame
 {
@@ -6,14 +7,11 @@ namespace MohawkTerminalGame
     {
         // Place your variables here
         // PLAYER
-        int playerCurrentHealth = 73;
-        int playerMaxHealth = 100;
-        float playerHitPercentage = 0.75f;
+        Player player = new Player("PLAYER", 100, 20, 0.75f, 20);
 
         // ENEMY
-        int enemyCurrentHealth = 7;
-        int enemyMaxHealth = 10;
-        float enemyHitPercentage = 0.75f;
+        Entity enemy = new Entity("ENEMY", 100, 20, 0.75f);
+
 
        
         /// Run once before Execute begins
@@ -50,7 +48,7 @@ namespace MohawkTerminalGame
 
         void PrintPlayerText()
         {
-            string healthBar = HealthDisplayText(playerCurrentHealth, playerMaxHealth);
+            string healthBar = HealthDisplayText(player.currentHealth, player.maxHealth);
 
             string[] parts = healthBar.Split('|');
             if (parts.Length == 2)
@@ -66,14 +64,14 @@ namespace MohawkTerminalGame
                     $"\tHealth: {healthBar}", ConsoleColor.Green, ConsoleColor.Black);
             }
 
-            Terminal.WriteLine($"\tHit %: {playerHitPercentage * 100}%\n", ConsoleColor.Green, ConsoleColor.Black);
+            Terminal.WriteLine($"\tHit %: {player.hitPercentage * 100}%\n", ConsoleColor.Green, ConsoleColor.Black);
             Terminal.WriteLine("", ConsoleColor.Black, ConsoleColor.Black);
         }
 
         void PrintEnemyText()
         {
 
-            string enemyhealthBar = HealthDisplayText(enemyCurrentHealth, enemyMaxHealth);
+            string enemyhealthBar = HealthDisplayText(enemy.currentHealth, enemy.maxHealth);
 
             string[] parts = enemyhealthBar.Split('|');
             if (parts.Length == 2)
@@ -90,7 +88,7 @@ namespace MohawkTerminalGame
                     $"\tHealth: {enemyhealthBar}");
             }
 
-            Terminal.WriteLine($"\tHit %: {enemyHitPercentage * 100}%\n", ConsoleColor.Red, ConsoleColor.Black);
+            Terminal.WriteLine($"\tHit %: {enemy.hitPercentage * 100}%\n", ConsoleColor.Red, ConsoleColor.Black);
             Terminal.WriteLine("", ConsoleColor.Black, ConsoleColor.Black);
         }
 
