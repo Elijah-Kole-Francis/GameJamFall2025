@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace MohawkTerminalGame
 {
@@ -6,16 +6,16 @@ namespace MohawkTerminalGame
     {
         // Place your variables here
         // PLAYER
-        int playerCurrentHealth = 100;
+        int playerCurrentHealth = 73;
         int playerMaxHealth = 100;
         float playerHitPercentage = 0.75f;
 
         // ENEMY
-        int enemyCurrentHealth = 10;
+        int enemyCurrentHealth = 7;
         int enemyMaxHealth = 10;
         float enemyHitPercentage = 0.75f;
 
-
+       
         /// Run once before Execute begins
         public void Setup()
         {
@@ -46,25 +46,52 @@ namespace MohawkTerminalGame
             PrintOptionsText();
             Terminal.ReadAndClearLine();
             Terminal.Clear();
-
         }
 
         void PrintPlayerText()
         {
-            Terminal.WriteLine("PLAYER:\n" +
-                $"\tHealth: {HealthDisplayText(playerCurrentHealth, playerMaxHealth)}\n" +
-                $"\tHit %: {playerHitPercentage * 100}%\n" +
-                "\n");
+            string healthBar = HealthDisplayText(playerCurrentHealth, playerMaxHealth);
 
+            string[] parts = healthBar.Split('|');
+            if (parts.Length == 2)
+            {
+                Terminal.Write("PLAYER:\n\tHealth: [", ConsoleColor.Green, ConsoleColor.Black);
+                Terminal.Write(parts[0], ConsoleColor.Green, ConsoleColor.Black);
+                Terminal.Write(parts[1], ConsoleColor.DarkRed, ConsoleColor.Black);     
+                Terminal.WriteLine("]", ConsoleColor.Green, ConsoleColor.Black);
+            }
+            else
+            {
+                Terminal.WriteLine("PLAYER:\n" +
+                    $"\tHealth: {healthBar}", ConsoleColor.Green, ConsoleColor.Black);
+            }
+
+            Terminal.WriteLine($"\tHit %: {playerHitPercentage * 100}%\n", ConsoleColor.Green, ConsoleColor.Black);
+            Terminal.WriteLine("", ConsoleColor.Black, ConsoleColor.Black);
         }
 
         void PrintEnemyText()
         {
-            Terminal.WriteLine("ENEMY:\n" +
-                $"\tHealth: {HealthDisplayText(enemyCurrentHealth, enemyMaxHealth)}\n" +
-                $"\tHit %: {enemyHitPercentage * 100}%\n" +
-                "\n");
 
+            string enemyhealthBar = HealthDisplayText(enemyCurrentHealth, enemyMaxHealth);
+
+            string[] parts = enemyhealthBar.Split('|');
+            if (parts.Length == 2)
+            {
+                Terminal.Write("ENEMY:\n\tHealth:[", ConsoleColor.Red, ConsoleColor.Black);
+                Terminal.Write(parts[0], ConsoleColor.Red, ConsoleColor.Black);
+                Terminal.Write(parts[1], ConsoleColor.DarkMagenta, ConsoleColor.Black);
+                Terminal.WriteLine("]", ConsoleColor.Red, ConsoleColor.Black);
+            }
+
+            else
+            {
+                Terminal.WriteLine("ENEMY:\n" +
+                    $"\tHealth: {enemyhealthBar}");
+            }
+
+            Terminal.WriteLine($"\tHit %: {enemyHitPercentage * 100}%\n", ConsoleColor.Red, ConsoleColor.Black);
+            Terminal.WriteLine("", ConsoleColor.Black, ConsoleColor.Black);
         }
 
         void PrintOptionsText()
@@ -74,24 +101,21 @@ namespace MohawkTerminalGame
                 $"\tOption 2\n" +
                 $"\tOption 3\n" +
                 $"\tOption 4\n" +
-                "\n");
+                "\n", ConsoleColor.Yellow, ConsoleColor.Black);
         }
 
         private string HealthDisplayText(int health, int maxHealth)
         {
-            string returnText = "";
-            float healthPercentage = (float)health / (float)maxHealth;
-            int healthIndex = (int)(healthPercentage * 10);
-            int dashesAdded = 0;
+            float healthPercentage = (float)health / maxHealth;
+            int totalBars = 10;
+            int filledBars = (int)(healthPercentage * totalBars);
+            int emptyBars = totalBars - filledBars;
 
-            while (dashesAdded <= 10)
-            {
-                returnText += dashesAdded == healthIndex ? $"{(int)(healthPercentage * 100)}%" : "-";
-                dashesAdded++;
-            }
+            string filled = new string('-', filledBars - 1) + $"{(int)(healthPercentage * 100)}%";
+            string empty = new string('-', emptyBars);
 
-            return $"[{returnText}]";
+            return $"{filled}|{empty}";
         }
-        
+
     }
 }
