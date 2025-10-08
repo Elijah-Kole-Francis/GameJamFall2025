@@ -123,19 +123,27 @@ namespace MohawkTerminalGame
             int emptyBars = totalBars - filledBars;
 
             string filled;
+
             if (filledBars > 0)
             {
-                // normal case: a few dashes, then percentage
                 filled = new string('-', filledBars - 1) + $"{(int)(healthPercentage * 100)}%";
             }
             else
             {
-                // special case: 0 health — no dashes before the percentage
                 filled = $"{(int)(healthPercentage * 100)}% ";
             }
-            string empty = new string('-', emptyBars);
-            return $"{filled}|{empty}";
+            if (health == 100)
+            {
+                string empty = new string('-', emptyBars);
+                return $"{filled}|{empty}";
+            }
+            else
+            {
+                string empty = new string('-', emptyBars += 1);
+                return $"{filled}|{empty}";
+            }
         }
 
     }
 }
+
