@@ -5,12 +5,20 @@ namespace MohawkTerminalGame
 {
     public class TerminalGame
     {
+        // COMMANDS
+        readonly Command commandYes = new Command("yes", new[] { "yes", "y" });
+        readonly Command commandNo = new Command("no", new[] {"no", "n"});
+        readonly Command commandAttack = new Command("attack", new[] { "attack", "atk" });
+        readonly Command commandBlock = new Command("block", new[] { "block", "blk" });
+        readonly Command commandHeal = new Command("heal", new[] { "heal" });
+
+        Command[] currentCommands;
         
         // PLAYER
         Player player = new Player("PLAYER", 100, 20, 0.75f, 20);
 
         // ENEMY
-        Entity[] Enemies = {
+        Entity[] enemies = {
             new Entity("ENEMY 1", 25, 10, 0.5f),   
             new Entity("ENEMY 2", 50, 20, 0.75f),   
             new Entity("ENEMY 3", 100, 30, 1f),
@@ -35,6 +43,8 @@ namespace MohawkTerminalGame
             Terminal.SetCursorPosition(0, 0);
             Terminal.ResetColor();
             Terminal.CursorVisible = true;
+
+            currentCommands = new[] { commandAttack, commandBlock, commandHeal };
         }
 
         // Execute() runs based on Program.TerminalExecuteMode (assign to it in Setup).
@@ -47,8 +57,16 @@ namespace MohawkTerminalGame
             PrintPlayerText();
             PrintEnemyText();
             PrintOptionsText();
-            Terminal.ReadAndClearLine();
+            
+            string input = Terminal.ReadAndClearLine();
+            ParseInput(input);
+
             Terminal.Clear();
+        }
+
+        void ParseInput(string input)
+        {
+
         }
 
         void PrintPlayerText()
@@ -75,13 +93,13 @@ namespace MohawkTerminalGame
 
         void PrintEnemyText()
         {
-            Entity currentEnemy = Enemies[currentEnemyIndex];
+            Entity currentEnemy = enemies[currentEnemyIndex];
             string enemyhealthBar = HealthDisplayText(currentEnemy.currentHealth, currentEnemy.maxHealth);
 
             string[] parts = enemyhealthBar.Split('|');
             if (parts.Length == 2)
             {
-                Terminal.Write("ENEMY:\n\tHealth:[", ConsoleColor.Red, ConsoleColor.Black);
+                Terminal.Write("ENEMY:\n\tHealth: [", ConsoleColor.Red, ConsoleColor.Black);
                 Terminal.Write(parts[0], ConsoleColor.Red, ConsoleColor.Black);
                 Terminal.Write(parts[1], ConsoleColor.DarkMagenta, ConsoleColor.Black);
                 Terminal.WriteLine("]", ConsoleColor.Red, ConsoleColor.Black);
@@ -99,17 +117,20 @@ namespace MohawkTerminalGame
 
         void PrintOptionsText()
         {
+            string optionsText = "";
+            foreach (Command command in currentCommands)
+            {
+                optionsText += "\t" + command.name.ToUpper() + "\n";
+            }
+            
             Terminal.WriteLine("PLAYER OPTIONS:\n" +
-                $"\tOption 1\n" +
-                $"\tOption 2\n" +
-                $"\tOption 3\n" +
-                $"\tOption 4\n" +
+                optionsText +
                 "\n", ConsoleColor.Yellow, ConsoleColor.Black);
         }
 
         private string HealthDisplayText(int health, int maxHealth)
         {
-            float healthPercentage = (float)(health / maxHealth);
+            float healthPercentage = (float)(health) / (float)maxHealth;
             int totalBars = 10;
             int filledBars = (int)(healthPercentage * totalBars);
             int emptyBars = totalBars - filledBars;
