@@ -14,6 +14,7 @@ namespace TerminalGameWithAudio
         public int maxHealth;
         public int baseDamage;
         public float hitPercentage;
+        public bool isAlive = true;
 
         public Entity(string name, int maxHealth, int baseDamage, float hitPercentage) 
         {
@@ -23,6 +24,20 @@ namespace TerminalGameWithAudio
             this.hitPercentage = hitPercentage;
             
             currentHealth = maxHealth;
+        }
+
+        public void Damage(int amount)
+        {
+            if (!isAlive) return;
+            
+            currentHealth = Math.Min(currentHealth - amount, 0);
+
+            if (currentHealth == 0) Kill();
+        }
+
+        public void Kill()
+        {
+            if (isAlive) isAlive = false;
         }
 
 

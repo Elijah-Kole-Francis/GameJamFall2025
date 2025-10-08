@@ -13,7 +13,9 @@ namespace MohawkTerminalGame
         readonly Command commandHeal = new Command("heal", new[] { "heal" });
 
         Command[] currentCommands;
-        
+        Command chosenCommand = null;
+        Command enemyCommand = null;
+
         // PLAYER
         Player player = new Player("PLAYER", 100, 20, 0.75f, 20);
 
@@ -58,15 +60,71 @@ namespace MohawkTerminalGame
             PrintEnemyText();
             PrintOptionsText();
             
-            string input = Terminal.ReadAndClearLine();
-            ParseInput(input);
+            ParseInput();
 
             Terminal.Clear();
         }
 
-        void ParseInput(string input)
+        void ParseInput()
         {
+            chosenCommand = null;
+            
+            while (true)
+            {
+                Terminal.Write("Please enter a command: ");
 
+                string input = Terminal.ReadAndClearLine();
+                int commandIndex = 0;
+
+                foreach (Command command in currentCommands)
+                {
+                    if (command.DoesMatch(input))
+                    {
+                        chosenCommand = command;
+                        break;
+                    }
+                }
+
+                if (int.TryParse(input, out commandIndex) && chosenCommand == null)
+                {
+                    chosenCommand = currentCommands[commandIndex - 1];
+                }
+
+                if (chosenCommand != null) break;
+
+                Terminal.ClearLine();
+                Terminal.Write("Not a valid command. ");
+            }
+
+            ChooseEnemyCommand(); // can be moved after calling player command if need be - JM
+
+            // Wanted to do switch statement but wasnt working and dont have time to figure ts out - JM
+            if (chosenCommand == commandAttack) Attack();
+            else if (chosenCommand == commandBlock) Block();
+            else if (chosenCommand == commandHeal) Heal();
+
+        }
+
+        void Attack()
+        {
+            Terminal.WriteLine("Played Attack"); // For debug, can be removed - JM
+        }
+
+        void Block()
+        {
+            Terminal.WriteLine("Played Blocked"); // For debug, can be removed - JM
+        }
+
+        void Heal()
+        {
+            Terminal.WriteLine("Played Heal"); // For debug, can be removed - JM
+        }
+
+        void ChooseEnemyCommand()
+        {
+            Command[] enemyAllowedCommands = { };
+            
+            // For now just need it to randomly need to pick from allowed moves and apply to player - JM
         }
 
         void PrintPlayerText()
