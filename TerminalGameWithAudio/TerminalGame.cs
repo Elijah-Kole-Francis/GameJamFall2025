@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using TerminalGameWithAudio;
 
 namespace MohawkTerminalGame
@@ -7,13 +7,13 @@ namespace MohawkTerminalGame
     {
         // Place your variables here
         // PLAYER
-        Player player = new Player("PLAYER", 100, 20, 0.75f, 20);
+        Player player = new Player("PLAYER", 100, 20, 0.75f, 100);
 
         // ENEMY
         Entity enemy = new Entity("ENEMY", 100, 20, 0.75f);
 
-
        
+
         /// Run once before Execute begins
         public void Setup()
         {
@@ -50,13 +50,23 @@ namespace MohawkTerminalGame
         {
             string healthBar = HealthDisplayText(player.currentHealth, player.maxHealth);
 
-            string[] parts = healthBar.Split('|');
-            if (parts.Length == 2)
+            string[] healthParts = healthBar.Split('|');
+            if (healthParts.Length == 2)
             {
                 Terminal.Write("PLAYER:\n\tHealth: [", ConsoleColor.Green, ConsoleColor.Black);
-                Terminal.Write(parts[0], ConsoleColor.Green, ConsoleColor.Black);
-                Terminal.Write(parts[1], ConsoleColor.DarkRed, ConsoleColor.Black);     
+                Terminal.Write(healthParts[0], ConsoleColor.Green, ConsoleColor.Black);
+                Terminal.Write(healthParts[1], ConsoleColor.DarkRed, ConsoleColor.Black);     
                 Terminal.WriteLine("]", ConsoleColor.Green, ConsoleColor.Black);
+            }
+
+            string armourBar = HealthDisplayText(player.currentArmour, player.maxArmour);
+            string[] armourParts = armourBar.Split('|');
+            if (armourParts.Length == 2)
+            {
+                Terminal.Write("\tArmor:  [", ConsoleColor.Gray, ConsoleColor.Black);
+                Terminal.Write(armourParts[0], ConsoleColor.Gray, ConsoleColor.Black);
+                Terminal.Write(armourParts[1], ConsoleColor.Black, ConsoleColor.Black);
+                Terminal.WriteLine("]", ConsoleColor.Gray, ConsoleColor.Black);
             }
             else
             {
@@ -64,7 +74,7 @@ namespace MohawkTerminalGame
                     $"\tHealth: {healthBar}", ConsoleColor.Green, ConsoleColor.Black);
             }
 
-            Terminal.WriteLine($"\tHit %: {player.hitPercentage * 100}%\n", ConsoleColor.Green, ConsoleColor.Black);
+            Terminal.WriteLine($"\tHit %:  {player.hitPercentage * 100}%\n", ConsoleColor.Green, ConsoleColor.Black);
             Terminal.WriteLine("", ConsoleColor.Black, ConsoleColor.Black);
         }
 
@@ -105,13 +115,25 @@ namespace MohawkTerminalGame
         private string HealthDisplayText(int health, int maxHealth)
         {
             float healthPercentage = (float)health / maxHealth;
+            if (healthPercentage < 0f) healthPercentage = 0f;
+            if (healthPercentage > 1f) healthPercentage = 1f;
+
             int totalBars = 10;
             int filledBars = (int)(healthPercentage * totalBars);
             int emptyBars = totalBars - filledBars;
 
-            string filled = new string('-', filledBars - 1) + $"{(int)(healthPercentage * 100)}%";
+            string filled;
+            if (filledBars > 0)
+            {
+                // normal case: a few dashes, then percentage
+                filled = new string('-', filledBars - 1) + $"{(int)(healthPercentage * 100)}%";
+            }
+            else
+            {
+                // special case: 0 health — no dashes before the percentage
+                filled = $"{(int)(healthPercentage * 100)}% ";
+            }
             string empty = new string('-', emptyBars);
-
             return $"{filled}|{empty}";
         }
 
