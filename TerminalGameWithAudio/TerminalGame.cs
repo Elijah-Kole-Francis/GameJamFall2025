@@ -21,14 +21,14 @@ namespace MohawkTerminalGame
 
         // ENEMY
         Entity[] enemies = {
-            new Entity("ENEMY 1", 25, 10, 0.5f),   
-            new Entity("ENEMY 2", 50, 20, 0.75f),   
+            new Entity("ENEMY 1", 100, 10, 0.5f),   
+            new Entity("ENEMY 2", 100, 20, 0.75f),   
             new Entity("ENEMY 3", 100, 30, 1f),
         };
         
         int currentEnemyIndex = 0;
 
-       
+        System.Random random = new System.Random();
 
         /// Run once before Execute begins
         public void Setup()
@@ -108,17 +108,26 @@ namespace MohawkTerminalGame
 
         void Attack()
         {
+            int i = 1;
             Terminal.WriteLine("Played Attack"); // For debug, can be removed - JM
+            Entity enemy = enemies[currentEnemyIndex];
+            int attackValue = random.Next(15, 26);
+            enemy.Damage(attackValue);
+
         }
 
         void Block()
         {
             Terminal.WriteLine("Played Blocked"); // For debug, can be removed - JM
+            int blockValue = random.Next(10, 25);
+            player.playerBlock(blockValue);
         }
 
         void Heal()
         {
             Terminal.WriteLine("Played Heal"); // For debug, can be removed - JM
+            int healValue = random.Next(10, 15);
+            player.playerHeal(healValue);
         }
 
         void ChooseEnemyCommand()
@@ -217,16 +226,12 @@ namespace MohawkTerminalGame
             {
                 filled = $"{(int)(healthPercentage * 100)}% ";
             }
-            if (health == 100)
-            {
-                string empty = new string('-', emptyBars);
-                return $"{filled}|{empty}";
-            }
-            else
-            {
-                string empty = new string('-', emptyBars += 1);
-                return $"{filled}|{empty}";
-            }
+            
+            
+            string empty = new string('-', emptyBars);
+            return $"{filled}|{empty}";
+            
+            
         }
 
     }

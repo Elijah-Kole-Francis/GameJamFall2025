@@ -30,7 +30,7 @@ namespace TerminalGameWithAudio
         {
             if (!isAlive) return;
             
-            currentHealth = Math.Min(currentHealth - amount, 0);
+            currentHealth = Math.Min(currentHealth - amount, maxHealth);
 
             if (currentHealth == 0) Kill();
         }
