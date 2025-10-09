@@ -33,7 +33,7 @@ namespace MohawkTerminalGame
 
 
         // COMMANDS / FIGHT
-        readonly Command commandAttack = new Command("attack", new[] { "atk" });
+        readonly Command commandAttack = new Command("attack", new[] { "atk", "attk" });
         readonly Command commandFireBall = new Command("fireball", new[] { "fire" });
         readonly Command commandBlock = new Command("block", new[] { "blk" });
         readonly Command commandHeal = new Command("heal", new[] { "heal" });
@@ -62,6 +62,8 @@ namespace MohawkTerminalGame
         /// Run once before Execute begins
         public void Setup()
         {
+            Terminal.SetTitle("Terminal Knight");
+            
             // Program configuration
             Program.TerminalExecuteMode = TerminalExecuteMode.ExecuteLoop;
             Program.TerminalInputMode = TerminalInputMode.KeyboardReadAndReadLine;
@@ -80,6 +82,13 @@ namespace MohawkTerminalGame
 
             maxCooldowns = new Dictionary<Command, int>
             {
+                { commandYes, 0 },
+                { commandNo, 0 },
+
+                { commandPlay, 0 },
+                { commandLore, 0 },
+                { commandRules, 0 },
+
                 { commandAttack, 0 },
                 { commandFireBall, 4 },
                 { commandBlock, 1 },
@@ -87,6 +96,13 @@ namespace MohawkTerminalGame
             };
             cooldowns = new Dictionary<Command, int>
             {
+                { commandYes, 0 },
+                { commandNo, 0 },
+
+                { commandPlay, 0 },
+                { commandLore, 0 },
+                { commandRules, 0 },
+
                 { commandAttack, 0 },
                 { commandFireBall, 0 },
                 { commandBlock, 0 },
@@ -406,19 +422,14 @@ namespace MohawkTerminalGame
 
         void PrintOptionsText()
         {
-            Terminal.WriteLine("\nOPTIONS:", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("\nCOMMANDS:", ConsoleColor.Yellow, ConsoleColor.Black);
             foreach (Command command in currentCommands)
             {
-                if (cooldowns.ContainsKey(command))
-                {
-                    int remainingCooldown = cooldowns[command];
-                    ConsoleColor color = remainingCooldown > 0 ? ConsoleColor.Red : ConsoleColor.Yellow;
-                    Terminal.WriteLine($"{command.name.ToUpper()} ({remainingCooldown})", color, ConsoleColor.Black);
-                }
-                else
-                {
-                    Terminal.WriteLine($"{command.name.ToUpper()}", ConsoleColor.Yellow, ConsoleColor.Black);
-                }
+                
+                int remainingCooldown = cooldowns[command];
+                ConsoleColor color = remainingCooldown > 0 ? ConsoleColor.Red : ConsoleColor.Yellow;
+                string printTexts = remainingCooldown > 0 ? $"{command.name.ToUpper()} (COOLDOWN: {remainingCooldown})" : $"{command.name.ToUpper()}";
+                Terminal.WriteLine($"   {printTexts}", color, ConsoleColor.Black);
                 
             }
             Terminal.WriteLine("\n", ConsoleColor.Black, ConsoleColor.Black);
