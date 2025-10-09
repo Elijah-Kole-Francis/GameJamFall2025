@@ -18,7 +18,7 @@ namespace TerminalGameWithAudio
         {
             this.maxArmour = maxArmour;
             currentArmour = 0;
-            currentHealth = 80; // OK, override the base class value here
+            
         }
 
         public void playerHeal(int amount)

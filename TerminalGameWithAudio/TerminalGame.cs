@@ -9,9 +9,12 @@ namespace MohawkTerminalGame
         readonly Command commandYes = new Command("yes", new[] { "yes", "y" });
         readonly Command commandNo = new Command("no", new[] {"no", "n"});
         readonly Command commandAttack = new Command("attack", new[] { "attack", "atk" });
+        readonly Command commandFireBall = new Command("fireball", new[] { "fireball", "fire" });
         readonly Command commandBlock = new Command("block", new[] { "block", "blk" });
         readonly Command commandHeal = new Command("heal", new[] { "heal" });
 
+        Command commandEnemeyAttack = new Command("enemyattack", new[] {"enemy attack"});
+        Command commandEnemyHeal = new Command("enemyheal", new[] { "enemy heal" });
         Command[] currentCommands;
         Command chosenCommand = null;
         Command enemyCommand = null;
@@ -47,7 +50,8 @@ namespace MohawkTerminalGame
             Terminal.ResetColor();
             Terminal.CursorVisible = true;
 
-            currentCommands = new[] { commandAttack, commandBlock, commandHeal };
+            currentCommands = new[] { commandAttack, commandFireBall, commandBlock, commandHeal};
+            
         }
 
         // Execute() runs based on Program.TerminalExecuteMode (assign to it in Setup).
@@ -101,6 +105,7 @@ namespace MohawkTerminalGame
 
             // Wanted to do switch statement but wasnt working and dont have time to figure ts out - JM
             if (chosenCommand == commandAttack) Attack();
+            else if (chosenCommand == commandFireBall) FireBall();
             else if (chosenCommand == commandBlock) Block();
             else if (chosenCommand == commandHeal) Heal();
 
@@ -108,7 +113,7 @@ namespace MohawkTerminalGame
 
         void Attack()
         {
-            int i = 1;
+            
             Terminal.WriteLine("Played Attack"); // For debug, can be removed - JM
             Entity enemy = enemies[currentEnemyIndex];
             int attackValue = random.Next(15, 26);
@@ -116,6 +121,14 @@ namespace MohawkTerminalGame
 
         }
 
+        void FireBall()
+        {
+            Entity enemy = enemies[currentEnemyIndex];
+            int attackValue = random.Next(30, 40);
+            int selfdamage = random.Next(10, 15);
+            enemy.Damage(attackValue);
+            player.playerDamage(selfdamage);
+        }
         void Block()
         {
             Terminal.WriteLine("Played Blocked"); // For debug, can be removed - JM
@@ -132,11 +145,27 @@ namespace MohawkTerminalGame
 
         void ChooseEnemyCommand()
         {
-            Command[] enemyAllowedCommands = { };
-            
+            Command[] enemyAllowedCommands = {};
+            enemyAllowedCommands = new[] { commandEnemeyAttack, commandEnemyHeal };
+            int enemyIndex = random.Next(0, enemyAllowedCommands.Length);
+
+            Command enemyIntention = enemyAllowedCommands[enemyIndex];
+
+            if (enemyIntention == commandEnemeyAttack) enemyAttack();
+            if (enemyIntention == commandEnemyHeal) enemyHeal();
             // For now just need it to randomly need to pick from allowed moves and apply to player - JM
         }
-
+        void enemyAttack()
+        {
+            int attackValue = random.Next(15, 25);
+            player.playerDamage(attackValue);
+        }
+        void enemyHeal()
+        {
+            Entity enemy = enemies[currentEnemyIndex];
+            int healValue = random.Next(-15, -10);
+            enemy.Damage(healValue);
+        }
         void PrintPlayerText()
         {
             string healthBar = HealthDisplayText(player.currentHealth, player.maxHealth);
