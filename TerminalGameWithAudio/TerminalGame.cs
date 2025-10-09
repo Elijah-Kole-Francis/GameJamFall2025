@@ -148,18 +148,8 @@ namespace MohawkTerminalGame
                 // Fight Screen Stuff
                 case Screen.Fight:
                     PrintFightScreen();
-
-                    if (enemies[currentEnemyIndex].currentHealth <= 0)
-                    {
-                        currentScreen = Screen.Upgrade;
-                        currentEnemyIndex++;
-                    }
-
-                    if (currentEnemyIndex >= enemies.Length|| player.currentHealth <= 0)
-                    {
-                        currentScreen = Screen.End;
-                    }
                     break;
+
 
                 // Upgrade
                 case Screen.Upgrade:
@@ -258,10 +248,22 @@ namespace MohawkTerminalGame
                 case Screen.Fight:
                     EvaluateFightCommand();
                     ChooseEnemyCommand();
+
+                    if (enemies[currentEnemyIndex].currentHealth <= 0)
+                    {
+                        currentScreen = Screen.Upgrade;
+                        currentEnemyIndex++;
+                    }
+
+                    if (currentEnemyIndex >= enemies.Length || player.currentHealth <= 0)
+                    {
+                        currentScreen = Screen.End;
+                    }
+
                     break;
 
                 case Screen.Upgrade:
-                    //
+                    if (chosenCommand == commandYes) currentScreen = Screen.Fight;
                     break;
             }
 
@@ -360,7 +362,10 @@ namespace MohawkTerminalGame
 
         void PrintUpgradeScreen()
         {
+            currentCommands = new[] { commandYes };
+
             Terminal.WriteLine("This is the Upgrade Screen"); // Placeholder
+            Terminal.WriteLine("Return to fight?"); // Placeholder
         }
 
         void PrintEndScreen()
@@ -444,34 +449,36 @@ namespace MohawkTerminalGame
         }
         void printPlayerFeedback()
         {
-            Console.WriteLine($"Player chose to {chosenCommand.name.ToUpper()}");
+            Terminal.WriteLine($"Player chose to {chosenCommand.name.ToUpper()}");
 
             if (chosenCommand == commandAttack)
             {
-                Console.WriteLine($"Enemy took {lastAttackDamage} damage.");
+                Terminal.WriteLine($"Enemy took {lastAttackDamage} damage.");
             }
             else if (chosenCommand == commandFireBall)
             {
-                Console.WriteLine($"Enemy took {lastFireballDamage} damage.");
-                Console.WriteLine($"Player took {lastSelfDamage} damage.");
+                Terminal.WriteLine($"Enemy took {lastFireballDamage} damage.");
+                Terminal.WriteLine($"Player took {lastSelfDamage} damage.");
             }
             else if (chosenCommand == commandBlock)
             {
-                Console.WriteLine($"Player gained {lastBlockValue} armor/block.");
+                Terminal.WriteLine($"Player gained {lastBlockValue} armor/block.");
             }
             else if (chosenCommand == commandHeal)
             {
-                Console.WriteLine($"Player healed {lastHealValue} health.");
+                Terminal.WriteLine($"Player healed {lastHealValue} health.");
             }
 
-            if (enemyIntention == commandEnemyAttack)
+            if (enemyIntention == commandAttack)
             {
-                Console.WriteLine($"Enemy attacked player for {lastEnemyAttackValue} damage.");
+                Terminal.WriteLine($"Enemy attacked player for {lastEnemyAttackValue} damage.");
             }
-            else if (enemyIntention == commandEnemyHeal)
+            else if (enemyIntention == commandHeal)
             {
-                Console.WriteLine($"Enemy healed for {lastEnemyHealValue * -1} health.");
+                Terminal.WriteLine($"Enemy healed for {lastEnemyHealValue * -1} health.");
             }
+
+            Terminal.WriteLine("\n");
         }
 
         private string HealthDisplayText(int health, int maxHealth)
