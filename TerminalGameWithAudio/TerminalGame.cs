@@ -11,21 +11,33 @@ namespace MohawkTerminalGame
         enum Screen
         {
             Main,
+            Lore,
+            Rules,
+
             Fight,
+            
             Upgrade,
+
+            End,
         }
         Screen currentScreen = Screen.Main;
         
         // COMMANDS
-        readonly Command commandYes = new Command("yes", new[] { "yes", "y" });
-        readonly Command commandNo = new Command("no", new[] {"no", "n"});
-        readonly Command commandAttack = new Command("attack", new[] { "attack", "atk" });
-        readonly Command commandFireBall = new Command("fireball", new[] { "fireball", "fire" });
-        readonly Command commandBlock = new Command("block", new[] { "block", "blk" });
+        readonly Command commandYes = new Command("yes", new[] { "y" });
+        readonly Command commandNo = new Command("no", new[] { "n" });
+        
+        // COMMANDS / MAIN
+        readonly Command commandPlay = new Command("play");
+        readonly Command commandLore = new Command("lore");
+        readonly Command commandRules = new Command("rules");
+
+
+        // COMMANDS / FIGHT
+        readonly Command commandAttack = new Command("attack", new[] { "atk" });
+        readonly Command commandFireBall = new Command("fireball", new[] { "fire" });
+        readonly Command commandBlock = new Command("block", new[] { "blk" });
         readonly Command commandHeal = new Command("heal", new[] { "heal" });
 
-        Command commandEnemeyAttack = new Command("enemyattack", new[] {"enemy attack"});
-        Command commandEnemyHeal = new Command("enemyheal", new[] { "enemy heal" });
         Command[] currentCommands;
         Command chosenCommand = null;
         Command enemyCommand = null;
@@ -91,15 +103,28 @@ namespace MohawkTerminalGame
         //               Code must finish within the alloted time frame for this to work well.
         public void Execute()
         {
-            PrintPlayerText();
-            PrintEnemyText();
+            switch (currentScreen)
+            {
+                case Screen.Main:
+                    PrintMainMenu();
+                    break;
+
+                case Screen.Fight:
+                    PrintFightScreen();
+                    break;
+
+                case Screen.Upgrade:
+                    PrintUpgradeScreen();
+                    break;
+            }
+            
             PrintOptionsText();
             
             ParseInput();
 
             Terminal.Clear();
         }
-
+        
         void ParseInput()
         {
             chosenCommand = null;
@@ -128,7 +153,6 @@ namespace MohawkTerminalGame
                         else
                         {
                             Terminal.WriteLine($"That command is on cooldown for {cooldowns[command]} more turn(s).");
-                            return; // Ask for input again
                         }
                     }
                 }
@@ -150,7 +174,6 @@ namespace MohawkTerminalGame
                     else
                     {
                         Terminal.WriteLine($"That command is on cooldown for {cooldowns[selectedCommand]} more turn(s).");
-                        return; // Exit the method and ask for input again
                     }
                 }
 
@@ -206,14 +229,13 @@ namespace MohawkTerminalGame
         void ChooseEnemyCommand()
         {
             Command[] enemyAllowedCommands = {};
-            enemyAllowedCommands = new[] { commandEnemeyAttack, commandEnemyHeal };
+            enemyAllowedCommands = new[] { commandAttack, commandHeal };
             int enemyIndex = random.Next(0, enemyAllowedCommands.Length);
 
             Command enemyIntention = enemyAllowedCommands[enemyIndex]; 
 
-            if (enemyIntention == commandEnemeyAttack) enemyAttack();
-            if (enemyIntention == commandEnemyHeal) enemyHeal();
-            // For now just need it to randomly need to pick from allowed moves and apply to player - JM
+            if (enemyIntention == commandAttack) enemyAttack();
+            if (enemyIntention == commandHeal) enemyHeal();
         }
         void enemyAttack()
         {
@@ -226,6 +248,23 @@ namespace MohawkTerminalGame
             int healValue = random.Next(-15, -10);
             enemy.Damage(healValue);
         }
+
+        void PrintMainMenu()
+        {
+            Terminal.WriteLine("This is the Main Menu"); // Placeholder
+        }
+
+        void PrintFightScreen()
+        {
+            PrintPlayerText();
+            PrintEnemyText();
+        }
+
+        void PrintUpgradeScreen()
+        {
+
+        }
+
         void PrintPlayerText()
         {
             string healthBar = HealthDisplayText(player.currentHealth, player.maxHealth);
@@ -286,7 +325,7 @@ namespace MohawkTerminalGame
 
         void PrintOptionsText()
         {
-            Terminal.WriteLine("PLAYER OPTIONS:\n", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("\nPLAYER OPTIONS:\n", ConsoleColor.Yellow, ConsoleColor.Black);
             foreach (Command command in currentCommands)
             {
                 int remainingCooldown = cooldowns[command];
