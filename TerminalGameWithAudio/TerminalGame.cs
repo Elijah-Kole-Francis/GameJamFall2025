@@ -15,11 +15,12 @@ namespace MohawkTerminalGame
         readonly Command commandBlock = new Command("block", new[] { "block", "blk" });
         readonly Command commandHeal = new Command("heal", new[] { "heal" });
 
-        Command commandEnemeyAttack = new Command("enemyattack", new[] {"enemy attack"});
+        Command commandEnemyAttack = new Command("enemyattack", new[] {"enemy attack"});
         Command commandEnemyHeal = new Command("enemyheal", new[] { "enemy heal" });
         Command[] currentCommands;
         Command chosenCommand = null;
         Command enemyCommand = null;
+        Command enemyIntention = null;
         //cool down dictionarys
         Dictionary<Command, int> cooldowns;
         Dictionary<Command, int> maxCooldowns;
@@ -27,13 +28,23 @@ namespace MohawkTerminalGame
         // PLAYER
         Player player = new Player("PLAYER", 100, 20, 0.75f, 100);
 
+        int lastAttackDamage = 0;
+        int lastFireballDamage = 0;
+        int lastSelfDamage = 0;
+        int lastBlockValue = 0;
+        int lastHealValue = 0;
+        
+
         // ENEMY
         Entity[] enemies = {
             new Entity("ENEMY 1", 100, 10, 0.5f),   
             new Entity("ENEMY 2", 100, 20, 0.75f),   
             new Entity("ENEMY 3", 100, 30, 1f),
         };
-        
+
+        int lastEnemyAttackValue = 0;
+        int lastEnemyHealValue = 0;
+
         int currentEnemyIndex = 0;
 
         System.Random random = new System.Random();
@@ -89,6 +100,7 @@ namespace MohawkTerminalGame
             ParseInput();
 
             Terminal.Clear();
+            printPlayerFeedback();
         }
 
         void ParseInput()
@@ -161,61 +173,55 @@ namespace MohawkTerminalGame
 
             cooldowns[chosenCommand] = maxCooldowns[chosenCommand];
         }
-
         public void Attack()
         {
-            
-            Terminal.WriteLine("Played Attack"); // For debug, can be removed - JM
+            Terminal.WriteLine("Played Attack");
             Entity enemy = enemies[currentEnemyIndex];
-            int attackAttackValue = random.Next(15, 26);
-            enemy.Damage(attackAttackValue);
-
+            lastAttackDamage = random.Next(15, 26);
+            enemy.Damage(lastAttackDamage);
         }
-
         public void FireBall()
         {
             Entity enemy = enemies[currentEnemyIndex];
-            int fireBallAttackValue = random.Next(30, 40);
-            int selfDamage = random.Next(10, 15);
-            enemy.Damage(fireBallAttackValue);
-            player.playerDamage(selfDamage);
+            lastFireballDamage = random.Next(30, 40);
+            lastSelfDamage = random.Next(10, 15);
+            enemy.Damage(lastFireballDamage);
+            player.playerDamage(lastSelfDamage);
         }
         public void Block()
         {
-            Terminal.WriteLine("Played Blocked"); // For debug, can be removed - JM
-            int blockValue = random.Next(10, 25);
-            player.playerBlock(blockValue);
+            Terminal.WriteLine("Played Blocked");
+            lastBlockValue = random.Next(10, 25);
+            player.playerBlock(lastBlockValue);
         }
-
         public void Heal()
         {
-            Terminal.WriteLine("Played Heal"); // For debug, can be removed - JM
-            int healValue = random.Next(10, 15);
-            player.playerHeal(healValue);
+            Terminal.WriteLine("Played Heal");
+            lastHealValue = random.Next(10, 15);
+            player.playerHeal(lastHealValue);
         }
 
         void ChooseEnemyCommand()
         {
-            Command[] enemyAllowedCommands = {};
-            enemyAllowedCommands = new[] { commandEnemeyAttack, commandEnemyHeal };
+            Command[] enemyAllowedCommands = { commandEnemyAttack, commandEnemyHeal };
             int enemyIndex = random.Next(0, enemyAllowedCommands.Length);
 
-            Command enemyIntention = enemyAllowedCommands[enemyIndex]; 
+            enemyIntention = enemyAllowedCommands[enemyIndex];
 
-            if (enemyIntention == commandEnemeyAttack) enemyAttack();
+            if (enemyIntention == commandEnemyAttack) enemyAttack();
             if (enemyIntention == commandEnemyHeal) enemyHeal();
-            // For now just need it to randomly need to pick from allowed moves and apply to player - JM
         }
         public void enemyAttack()
         {
-            int attackValue = random.Next(15, 25);
-            player.playerDamage(attackValue);
+            lastEnemyAttackValue = random.Next(15, 25);
+            player.playerDamage(lastEnemyAttackValue);
         }
+
         public void enemyHeal()
         {
             Entity enemy = enemies[currentEnemyIndex];
-            int enemyHealValue = random.Next(-15, -10);
-            enemy.Damage(enemyHealValue);
+            lastEnemyHealValue = random.Next(-15, -10);
+            enemy.Damage(lastEnemyHealValue);  
         }
         void PrintPlayerText()
         {
@@ -288,34 +294,36 @@ namespace MohawkTerminalGame
         }
         void printPlayerFeedback()
         {
-            Console.WriteLine($"player chose to {command.name.ToUpper()}");
+            Console.WriteLine($"Player chose to {chosenCommand.name.ToUpper()}");
+
             if (chosenCommand == commandAttack)
             {
-                Console.WriteLine($"enemy took {attackAttackValue}% damage");
+                Console.WriteLine($"Enemy took {lastAttackDamage} damage.");
             }
             else if (chosenCommand == commandFireBall)
             {
-                Console.WriteLine($"enemy took {fireBallAttackValue}% damage");
-                Console.WriteLine($"player did {selfDamage}% damage to themselves");
+                Console.WriteLine($"Enemy took {lastFireballDamage} damage.");
+                Console.WriteLine($"Player took {lastSelfDamage} damage.");
             }
             else if (chosenCommand == commandBlock)
             {
-                Console.WriteLine($"player gained {blockValue}%");
+                Console.WriteLine($"Player gained {lastBlockValue} armor/block.");
             }
             else if (chosenCommand == commandHeal)
             {
-                Console.WriteLine($"player healed {healValue}%");
+                Console.WriteLine($"Player healed {lastHealValue} health.");
             }
-            Terminal.WriteLine($"enemy {}");
-            if (enemyIntention == commandEnemeyAttack)
+
+            if (enemyIntention == commandEnemyAttack)
             {
-                Terminal.WriteLine($"enemy attacked {attackValue}%");
+                Console.WriteLine($"Enemy attacked player for {lastEnemyAttackValue} damage.");
             }
-            if (enemyIntention == commandEnemyHeal)
+            else if (enemyIntention == commandEnemyHeal)
             {
-                Terminal.WriteLine($"enemy healed {enemyHealValue}%");
+                Console.WriteLine($"Enemy healed for {lastEnemyHealValue * -1} health.");
             }
         }
+
         private string HealthDisplayText(int health, int maxHealth)
         {
             float healthPercentage = (float)health / maxHealth;
