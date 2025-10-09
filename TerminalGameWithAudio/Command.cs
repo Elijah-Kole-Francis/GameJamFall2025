@@ -9,7 +9,7 @@ namespace TerminalGameWithAudio
     public class Command
     {
         public string name;
-        String[] additionalAliases;
+        String[] additionalAliases = new String[] { };
         
         public Command(string commandName, String[] additionalAliases = null) 
         {

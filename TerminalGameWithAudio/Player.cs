@@ -40,6 +40,7 @@ namespace TerminalGameWithAudio
             }
             else
             {
+                // Not important rn but extra damage dosent transfer over to reg health
                 currentArmour = Math.Max(currentArmour - amount, 0); // also avoid negative armour
             }
 

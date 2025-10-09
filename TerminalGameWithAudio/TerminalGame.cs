@@ -105,16 +105,43 @@ namespace MohawkTerminalGame
         {
             switch (currentScreen)
             {
+                // Main Screen Stuff
                 case Screen.Main:
-                    PrintMainMenu();
+                    PrintMainMenuScreen();
                     break;
 
+                case Screen.Lore:
+                    PrintLoreScreen();
+                    break;
+
+                case Screen.Rules:
+                    PrintRulesScreen();
+                    break;
+
+                // Fight Screen Stuff
                 case Screen.Fight:
                     PrintFightScreen();
+
+                    if (enemies[currentEnemyIndex].currentHealth <= 0)
+                    {
+                        currentScreen = Screen.Upgrade;
+                        currentEnemyIndex++;
+                    }
+
+                    if (currentEnemyIndex >= enemies.Length|| player.currentHealth <= 0)
+                    {
+                        currentScreen = Screen.End;
+                    }
                     break;
 
+                // Upgrade
                 case Screen.Upgrade:
                     PrintUpgradeScreen();
+                    break;
+
+                // End
+                case Screen.End:
+                    PrintEndScreen();
                     break;
             }
             
@@ -140,6 +167,7 @@ namespace MohawkTerminalGame
                 {
                     if (command.DoesMatch(input))
                     {
+                        
                         if (cooldowns[command] == 0)
                         {
                             chosenCommand = command;
@@ -183,9 +211,39 @@ namespace MohawkTerminalGame
                 Terminal.Write("Not a valid command. ");
             }
 
-            ChooseEnemyCommand(); // can be moved after calling player command if need be - JM
+            switch (currentScreen)
+            {
+                case Screen.Main:
+                    if (chosenCommand == commandPlay) currentScreen = Screen.Fight;
+                    else if (chosenCommand == commandLore) currentScreen = Screen.Lore;
+                    else if (chosenCommand == commandRules) currentScreen = Screen.Rules;
+                    break;
 
-            // Wanted to do switch statement but wasnt working and dont have time to figure ts out - JM
+                case Screen.Lore:
+                    if (chosenCommand == commandYes) currentScreen = Screen.Main;
+                    break;
+
+                case Screen.Rules:
+                    if (chosenCommand == commandYes) currentScreen = Screen.Main;
+                    break;
+
+                case Screen.Fight:
+                    EvaluateFightCommand();
+                    ChooseEnemyCommand();
+                    break;
+
+                case Screen.Upgrade:
+                    //
+                    break;
+            }
+
+
+            
+
+        }
+
+        void EvaluateFightCommand()
+        {
             if (chosenCommand == commandAttack) Attack();
             else if (chosenCommand == commandFireBall) FireBall();
             else if (chosenCommand == commandBlock) Block();
@@ -196,8 +254,6 @@ namespace MohawkTerminalGame
 
         void Attack()
         {
-            
-            Terminal.WriteLine("Played Attack"); // For debug, can be removed - JM
             Entity enemy = enemies[currentEnemyIndex];
             int attackValue = random.Next(15, 26);
             enemy.Damage(attackValue);
@@ -214,14 +270,12 @@ namespace MohawkTerminalGame
         }
         void Block()
         {
-            Terminal.WriteLine("Played Blocked"); // For debug, can be removed - JM
             int blockValue = random.Next(10, 25);
             player.playerBlock(blockValue);
         }
 
         void Heal()
         {
-            Terminal.WriteLine("Played Heal"); // For debug, can be removed - JM
             int healValue = random.Next(10, 15);
             player.playerHeal(healValue);
         }
@@ -249,20 +303,47 @@ namespace MohawkTerminalGame
             enemy.Damage(healValue);
         }
 
-        void PrintMainMenu()
+        void PrintMainMenuScreen()
         {
+            currentCommands = new[] { commandPlay, commandLore, commandRules };
+            
             Terminal.WriteLine("This is the Main Menu"); // Placeholder
+        }
+
+        void PrintLoreScreen()
+        {
+            currentCommands = new[] { commandYes };
+
+            Terminal.WriteLine("This is the Lore Screen"); // Placeholder
+            Terminal.WriteLine("Return to Main Menu?");
+        }
+
+        void PrintRulesScreen()
+        {
+            currentCommands = new[] { commandYes };
+
+            Terminal.WriteLine("This is the Rule Screen"); // Placeholder
+            Terminal.WriteLine("Return to Main Menu?");
         }
 
         void PrintFightScreen()
         {
+            currentCommands = new[] { commandAttack, commandFireBall, commandBlock, commandHeal };
+
             PrintPlayerText();
             PrintEnemyText();
         }
 
         void PrintUpgradeScreen()
         {
+            Terminal.WriteLine("This is the Upgrade Screen"); // Placeholder
+        }
 
+        void PrintEndScreen()
+        {
+            string endText = (player.currentHealth > 0) ? "You won!" : "You died!";
+
+            Terminal.WriteLine(endText);
         }
 
         void PrintPlayerText()
@@ -325,12 +406,20 @@ namespace MohawkTerminalGame
 
         void PrintOptionsText()
         {
-            Terminal.WriteLine("\nPLAYER OPTIONS:\n", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("\nOPTIONS:", ConsoleColor.Yellow, ConsoleColor.Black);
             foreach (Command command in currentCommands)
             {
-                int remainingCooldown = cooldowns[command];
-                ConsoleColor color = remainingCooldown > 0 ? ConsoleColor.Red : ConsoleColor.Yellow;
-                Terminal.WriteLine($"\t{command.name.ToUpper()} ({remainingCooldown})", color, ConsoleColor.Black);
+                if (cooldowns.ContainsKey(command))
+                {
+                    int remainingCooldown = cooldowns[command];
+                    ConsoleColor color = remainingCooldown > 0 ? ConsoleColor.Red : ConsoleColor.Yellow;
+                    Terminal.WriteLine($"{command.name.ToUpper()} ({remainingCooldown})", color, ConsoleColor.Black);
+                }
+                else
+                {
+                    Terminal.WriteLine($"{command.name.ToUpper()}", ConsoleColor.Yellow, ConsoleColor.Black);
+                }
+                
             }
             Terminal.WriteLine("\n", ConsoleColor.Black, ConsoleColor.Black);
         }
