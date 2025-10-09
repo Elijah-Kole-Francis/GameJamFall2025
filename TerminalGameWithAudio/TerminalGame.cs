@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using TerminalGameWithAudio;
 
 namespace MohawkTerminalGame
@@ -18,6 +20,9 @@ namespace MohawkTerminalGame
         Command[] currentCommands;
         Command chosenCommand = null;
         Command enemyCommand = null;
+        //cool down dictionarys
+        Dictionary<Command, int> cooldowns;
+        Dictionary<Command, int> maxCooldowns;
 
         // PLAYER
         Player player = new Player("PLAYER", 100, 20, 0.75f, 100);
@@ -51,7 +56,23 @@ namespace MohawkTerminalGame
             Terminal.CursorVisible = true;
 
             currentCommands = new[] { commandAttack, commandFireBall, commandBlock, commandHeal};
-            
+
+            maxCooldowns = new Dictionary<Command, int>
+            {
+                { commandAttack, 0 },
+                { commandFireBall, 4 },
+                { commandBlock, 1 },
+                { commandHeal, 3 }
+            };
+            cooldowns = new Dictionary<Command, int>
+            {
+                { commandAttack, 0 },
+                { commandFireBall, 0 },
+                { commandBlock, 0 },
+                { commandHeal, 0 }
+            };
+
+
         }
 
         // Execute() runs based on Program.TerminalExecuteMode (assign to it in Setup).
@@ -85,14 +106,43 @@ namespace MohawkTerminalGame
                 {
                     if (command.DoesMatch(input))
                     {
-                        chosenCommand = command;
-                        break;
+                        if (cooldowns[command] == 0)
+                        {
+                            chosenCommand = command;
+                            foreach (var key in cooldowns.Keys.ToList())
+                            {
+                                if (cooldowns[key] > 0)
+                                    cooldowns[key]--;
+                            }
+                            break;
+                        }
+                        else
+                        {
+                            Terminal.WriteLine($"That command is on cooldown for {cooldowns[command]} more turn(s).");
+                            return; // Ask for input again
+                        }
                     }
                 }
 
                 if (int.TryParse(input, out commandIndex) && chosenCommand == null)
                 {
-                    chosenCommand = currentCommands[commandIndex - 1];
+                    Command selectedCommand = currentCommands[commandIndex - 1];
+
+                    if (cooldowns[selectedCommand] == 0)
+                    {
+                        chosenCommand = selectedCommand;
+                        foreach (var key in cooldowns.Keys.ToList())
+                        {
+                            if (cooldowns[key] > 0)
+                                cooldowns[key]--;
+                        }
+                        break;
+                    }
+                    else
+                    {
+                        Terminal.WriteLine($"That command is on cooldown for {cooldowns[selectedCommand]} more turn(s).");
+                        return; // Exit the method and ask for input again
+                    }
                 }
 
                 if (chosenCommand != null) break;
@@ -109,6 +159,7 @@ namespace MohawkTerminalGame
             else if (chosenCommand == commandBlock) Block();
             else if (chosenCommand == commandHeal) Heal();
 
+            cooldowns[chosenCommand] = maxCooldowns[chosenCommand];
         }
 
         void Attack()
@@ -149,7 +200,7 @@ namespace MohawkTerminalGame
             enemyAllowedCommands = new[] { commandEnemeyAttack, commandEnemyHeal };
             int enemyIndex = random.Next(0, enemyAllowedCommands.Length);
 
-            Command enemyIntention = enemyAllowedCommands[enemyIndex];
+            Command enemyIntention = enemyAllowedCommands[enemyIndex]; 
 
             if (enemyIntention == commandEnemeyAttack) enemyAttack();
             if (enemyIntention == commandEnemyHeal) enemyHeal();
@@ -211,7 +262,9 @@ namespace MohawkTerminalGame
                 Terminal.Write(parts[1], ConsoleColor.DarkMagenta, ConsoleColor.Black);
                 Terminal.WriteLine("]", ConsoleColor.Red, ConsoleColor.Black);
             }
+            
 
+            
             else
             {
                 Terminal.WriteLine("ENEMY:\n" +
@@ -224,17 +277,15 @@ namespace MohawkTerminalGame
 
         void PrintOptionsText()
         {
-            string optionsText = "";
+            Terminal.WriteLine("PLAYER OPTIONS:\n", ConsoleColor.Yellow, ConsoleColor.Black);
             foreach (Command command in currentCommands)
             {
-                optionsText += "\t" + command.name.ToUpper() + "\n";
+                int remainingCooldown = cooldowns[command];
+                ConsoleColor color = remainingCooldown > 0 ? ConsoleColor.Red : ConsoleColor.Yellow;
+                Terminal.WriteLine($"\t{command.name.ToUpper()} ({remainingCooldown})", color, ConsoleColor.Black);
             }
-            
-            Terminal.WriteLine("PLAYER OPTIONS:\n" +
-                optionsText +
-                "\n", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("\n", ConsoleColor.Black, ConsoleColor.Black);
         }
-
         private string HealthDisplayText(int health, int maxHealth)
         {
             float healthPercentage = (float)health / maxHealth;
@@ -265,4 +316,3 @@ namespace MohawkTerminalGame
 
     }
 }
-
