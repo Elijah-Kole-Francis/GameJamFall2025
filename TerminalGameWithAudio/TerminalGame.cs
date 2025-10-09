@@ -7,16 +7,37 @@ namespace MohawkTerminalGame
 {
     public class TerminalGame
     {
+        // SCREEN
+        enum Screen
+        {
+            Main,
+            Lore,
+            Rules,
+
+            Fight,
+            
+            Upgrade,
+
+            End,
+        }
+        Screen currentScreen = Screen.Main;
+        
         // COMMANDS
-        readonly Command commandYes = new Command("yes", new[] { "yes", "y" });
-        readonly Command commandNo = new Command("no", new[] {"no", "n"});
-        readonly Command commandAttack = new Command("attack", new[] { "attack", "atk" });
-        readonly Command commandFireBall = new Command("fireball", new[] { "fireball", "fire" });
-        readonly Command commandBlock = new Command("block", new[] { "block", "blk" });
+        readonly Command commandYes = new Command("yes", new[] { "y" });
+        readonly Command commandNo = new Command("no", new[] { "n" });
+        
+        // COMMANDS / MAIN
+        readonly Command commandPlay = new Command("play");
+        readonly Command commandLore = new Command("lore");
+        readonly Command commandRules = new Command("rules");
+
+
+        // COMMANDS / FIGHT
+        readonly Command commandAttack = new Command("attack", new[] { "atk", "attk" });
+        readonly Command commandFireBall = new Command("fireball", new[] { "fire" });
+        readonly Command commandBlock = new Command("block", new[] { "blk" });
         readonly Command commandHeal = new Command("heal", new[] { "heal" });
 
-        Command commandEnemyAttack = new Command("enemyattack", new[] {"enemy attack"});
-        Command commandEnemyHeal = new Command("enemyheal", new[] { "enemy heal" });
         Command[] currentCommands;
         Command chosenCommand = null;
         Command enemyCommand = null;
@@ -52,6 +73,8 @@ namespace MohawkTerminalGame
         /// Run once before Execute begins
         public void Setup()
         {
+            Terminal.SetTitle("Terminal Knight");
+            
             // Program configuration
             Program.TerminalExecuteMode = TerminalExecuteMode.ExecuteLoop;
             Program.TerminalInputMode = TerminalInputMode.KeyboardReadAndReadLine;
@@ -70,6 +93,13 @@ namespace MohawkTerminalGame
 
             maxCooldowns = new Dictionary<Command, int>
             {
+                { commandYes, 0 },
+                { commandNo, 0 },
+
+                { commandPlay, 0 },
+                { commandLore, 0 },
+                { commandRules, 0 },
+
                 { commandAttack, 0 },
                 { commandFireBall, 4 },
                 { commandBlock, 1 },
@@ -77,6 +107,13 @@ namespace MohawkTerminalGame
             };
             cooldowns = new Dictionary<Command, int>
             {
+                { commandYes, 0 },
+                { commandNo, 0 },
+
+                { commandPlay, 0 },
+                { commandLore, 0 },
+                { commandRules, 0 },
+
                 { commandAttack, 0 },
                 { commandFireBall, 0 },
                 { commandBlock, 0 },
@@ -93,8 +130,48 @@ namespace MohawkTerminalGame
         //               Code must finish within the alloted time frame for this to work well.
         public void Execute()
         {
-            PrintPlayerText();
-            PrintEnemyText();
+            switch (currentScreen)
+            {
+                // Main Screen Stuff
+                case Screen.Main:
+                    PrintMainMenuScreen();
+                    break;
+
+                case Screen.Lore:
+                    PrintLoreScreen();
+                    break;
+
+                case Screen.Rules:
+                    PrintRulesScreen();
+                    break;
+
+                // Fight Screen Stuff
+                case Screen.Fight:
+                    PrintFightScreen();
+
+                    if (enemies[currentEnemyIndex].currentHealth <= 0)
+                    {
+                        currentScreen = Screen.Upgrade;
+                        currentEnemyIndex++;
+                    }
+
+                    if (currentEnemyIndex >= enemies.Length|| player.currentHealth <= 0)
+                    {
+                        currentScreen = Screen.End;
+                    }
+                    break;
+
+                // Upgrade
+                case Screen.Upgrade:
+                    PrintUpgradeScreen();
+                    break;
+
+                // End
+                case Screen.End:
+                    PrintEndScreen();
+                    break;
+            }
+            
             PrintOptionsText();
             
             ParseInput();
@@ -102,7 +179,7 @@ namespace MohawkTerminalGame
             Terminal.Clear();
             printPlayerFeedback();
         }
-
+        
         void ParseInput()
         {
             chosenCommand = null;
@@ -118,6 +195,7 @@ namespace MohawkTerminalGame
                 {
                     if (command.DoesMatch(input))
                     {
+                        
                         if (cooldowns[command] == 0)
                         {
                             chosenCommand = command;
@@ -131,7 +209,6 @@ namespace MohawkTerminalGame
                         else
                         {
                             Terminal.WriteLine($"That command is on cooldown for {cooldowns[command]} more turn(s).");
-                            return; // Ask for input again
                         }
                     }
                 }
@@ -153,7 +230,6 @@ namespace MohawkTerminalGame
                     else
                     {
                         Terminal.WriteLine($"That command is on cooldown for {cooldowns[selectedCommand]} more turn(s).");
-                        return; // Exit the method and ask for input again
                     }
                 }
 
@@ -163,9 +239,39 @@ namespace MohawkTerminalGame
                 Terminal.Write("Not a valid command. ");
             }
 
-            ChooseEnemyCommand(); // can be moved after calling player command if need be - JM
+            switch (currentScreen)
+            {
+                case Screen.Main:
+                    if (chosenCommand == commandPlay) currentScreen = Screen.Fight;
+                    else if (chosenCommand == commandLore) currentScreen = Screen.Lore;
+                    else if (chosenCommand == commandRules) currentScreen = Screen.Rules;
+                    break;
 
-            // Wanted to do switch statement but wasnt working and dont have time to figure ts out - JM
+                case Screen.Lore:
+                    if (chosenCommand == commandYes) currentScreen = Screen.Main;
+                    break;
+
+                case Screen.Rules:
+                    if (chosenCommand == commandYes) currentScreen = Screen.Main;
+                    break;
+
+                case Screen.Fight:
+                    EvaluateFightCommand();
+                    ChooseEnemyCommand();
+                    break;
+
+                case Screen.Upgrade:
+                    //
+                    break;
+            }
+
+
+            
+
+        }
+
+        void EvaluateFightCommand()
+        {
             if (chosenCommand == commandAttack) Attack();
             else if (chosenCommand == commandFireBall) FireBall();
             else if (chosenCommand == commandBlock) Block();
@@ -175,7 +281,6 @@ namespace MohawkTerminalGame
         }
         public void Attack()
         {
-            Terminal.WriteLine("Played Attack");
             Entity enemy = enemies[currentEnemyIndex];
             lastAttackDamage = random.Next(15, 26);
             enemy.Damage(lastAttackDamage);
@@ -190,26 +295,24 @@ namespace MohawkTerminalGame
         }
         public void Block()
         {
-            Terminal.WriteLine("Played Blocked");
             lastBlockValue = random.Next(10, 25);
             player.playerBlock(lastBlockValue);
         }
         public void Heal()
         {
-            Terminal.WriteLine("Played Heal");
             lastHealValue = random.Next(10, 15);
             player.playerHeal(lastHealValue);
         }
 
         void ChooseEnemyCommand()
         {
-            Command[] enemyAllowedCommands = { commandEnemyAttack, commandEnemyHeal };
+            Command[] enemyAllowedCommands = { commandAttack, commandHeal };
             int enemyIndex = random.Next(0, enemyAllowedCommands.Length);
 
             enemyIntention = enemyAllowedCommands[enemyIndex];
 
-            if (enemyIntention == commandEnemyAttack) enemyAttack();
-            if (enemyIntention == commandEnemyHeal) enemyHeal();
+            if (enemyIntention == commandAttack) enemyAttack();
+            if (enemyIntention == commandHeal) enemyHeal();
         }
         public void enemyAttack()
         {
@@ -223,6 +326,50 @@ namespace MohawkTerminalGame
             lastEnemyHealValue = random.Next(-15, -10);
             enemy.Damage(lastEnemyHealValue);  
         }
+
+        void PrintMainMenuScreen()
+        {
+            currentCommands = new[] { commandPlay, commandLore, commandRules };
+            
+            Terminal.WriteLine("This is the Main Menu"); // Placeholder
+        }
+
+        void PrintLoreScreen()
+        {
+            currentCommands = new[] { commandYes };
+
+            Terminal.WriteLine("This is the Lore Screen"); // Placeholder
+            Terminal.WriteLine("Return to Main Menu?");
+        }
+
+        void PrintRulesScreen()
+        {
+            currentCommands = new[] { commandYes };
+
+            Terminal.WriteLine("This is the Rule Screen"); // Placeholder
+            Terminal.WriteLine("Return to Main Menu?");
+        }
+
+        void PrintFightScreen()
+        {
+            currentCommands = new[] { commandAttack, commandFireBall, commandBlock, commandHeal };
+
+            PrintPlayerText();
+            PrintEnemyText();
+        }
+
+        void PrintUpgradeScreen()
+        {
+            Terminal.WriteLine("This is the Upgrade Screen"); // Placeholder
+        }
+
+        void PrintEndScreen()
+        {
+            string endText = (player.currentHealth > 0) ? "You won!" : "You died!";
+
+            Terminal.WriteLine(endText);
+        }
+
         void PrintPlayerText()
         {
             string healthBar = HealthDisplayText(player.currentHealth, player.maxHealth);
@@ -283,12 +430,15 @@ namespace MohawkTerminalGame
 
         void PrintOptionsText()
         {
-            Terminal.WriteLine("PLAYER OPTIONS:\n", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("\nCOMMANDS:", ConsoleColor.Yellow, ConsoleColor.Black);
             foreach (Command command in currentCommands)
             {
+                
                 int remainingCooldown = cooldowns[command];
                 ConsoleColor color = remainingCooldown > 0 ? ConsoleColor.Red : ConsoleColor.Yellow;
-                Terminal.WriteLine($"\t{command.name.ToUpper()} ({remainingCooldown})", color, ConsoleColor.Black);
+                string printTexts = remainingCooldown > 0 ? $"{command.name.ToUpper()} (COOLDOWN: {remainingCooldown})" : $"{command.name.ToUpper()}";
+                Terminal.WriteLine($"   {printTexts}", color, ConsoleColor.Black);
+                
             }
             Terminal.WriteLine("\n", ConsoleColor.Black, ConsoleColor.Black);
         }
