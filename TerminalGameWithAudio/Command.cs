@@ -9,19 +9,19 @@ namespace TerminalGameWithAudio
     public class Command
     {
         public string name;
-        String[] aliases;
+        String[] additionalAliases = new String[] { };
         
-        public Command(string commandName, String[] aliases) 
+        public Command(string commandName, String[] additionalAliases = null) 
         {
             name = commandName;
-            this.aliases = aliases;
+            this.additionalAliases = (additionalAliases != null) ? additionalAliases : this.additionalAliases;
         }
 
         public bool DoesMatch(string input)
         {
             input = input.ToLower();
 
-            return aliases.Contains(input);
+            return input.ToLower() == name.ToLower() || additionalAliases.Contains(input);
         }
     }
 }
