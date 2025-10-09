@@ -7,6 +7,15 @@ namespace MohawkTerminalGame
 {
     public class TerminalGame
     {
+        // SCREEN
+        enum Screen
+        {
+            Main,
+            Fight,
+            Upgrade,
+        }
+        Screen currentScreen = Screen.Main;
+        
         // COMMANDS
         readonly Command commandYes = new Command("yes", new[] { "yes", "y" });
         readonly Command commandNo = new Command("no", new[] {"no", "n"});
