@@ -517,7 +517,12 @@ namespace MohawkTerminalGame
 
         void PrintEndScreen()
         {
-            string endText = (player.currentHealth > 0) ? "You won!" : "You died!";
+            string endText = (player.currentHealth > 0) ?   "You won! \r\n" +
+                                                            "You defeated the dragon and all of his horde\r\n" +
+                                                            "Now that you have riches beyond imagine what will life bring you" :
+                                                            "You died!\r\n" +
+                                                            "Your body cold and lifeless destined to rot into nothing\r\n" +
+                                                            "as your names forgotten to time";
 
             Terminal.WriteLine(endText);
         }
