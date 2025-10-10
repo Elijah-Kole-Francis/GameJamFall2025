@@ -14,32 +14,39 @@ namespace TerminalGameWithAudio
         public int maxHealth;
         public int baseDamage;
         public float hitPercentage;
+        public float hitPercentageVariance;
         public bool isAlive = true;
 
-        public Entity(string name, int maxHealth, int baseDamage, float hitPercentage) 
+        private Random random = new Random();
+        public Entity(string name, int maxHealth, int baseDamage, float hitPercentage, float hitPercentageVariance)
         {
             this.name = name;
             this.maxHealth = maxHealth;
             this.baseDamage = baseDamage;
             this.hitPercentage = hitPercentage;
-            
+            this.hitPercentageVariance = hitPercentageVariance;
+
             currentHealth = maxHealth;
         }
-
+        public bool TryHit()
+        {
+            float hitChange = (float)random.NextDouble() * (hitPercentageVariance * 2) - hitPercentageVariance;
+            float finalChance = hitPercentage - hitChange;
+            float roll = (float)random.NextDouble() * 100f;
+            return roll < finalChance;
+        }
         public void Damage(int amount)
         {
             if (!isAlive) return;
-            
-            currentHealth = Math.Min(currentHealth - amount, maxHealth);
 
-            if (currentHealth == 0) Kill();
+            currentHealth = Math.Max(currentHealth - amount, 0);
+
+            if (currentHealth == 0)
+                Kill();
         }
-
         public void Kill()
         {
             if (isAlive) isAlive = false;
         }
-
-
     }
 }
