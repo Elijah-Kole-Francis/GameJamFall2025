@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MohawkTerminalGame;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -12,39 +13,63 @@ namespace TerminalGameWithAudio
     {
         public int currentArmour;
         public int maxArmour;
+        public float hitPercentageVariance;
 
-        public Player(string name, int maxHealth, int baseDamage, float hitPercentage, int maxArmour)
-            : base(name, maxHealth, baseDamage, hitPercentage)
+        private System.Random random = new System.Random();
+        public Player(string name, int maxHealth, int baseDamage, float hitPercentage, float hitPercentageVariance, int maxArmour)
+            : base(name, maxHealth, baseDamage, hitPercentage, hitPercentageVariance)
         {
             this.maxArmour = maxArmour;
             currentArmour = 0;
-            
+            this.hitPercentageVariance = hitPercentageVariance;
         }
+        public bool TryHit()
+        {
+            float hitChange = (float)random.NextDouble() * (hitPercentageVariance * 2) - hitPercentageVariance;
+            float finalChance = hitPercentage - hitChange;
+            float roll = (float)random.NextDouble() * 100f;
+            return roll < finalChance;
+        }
+        public void playerDamage(int amount)
+        {
+            if (!isAlive) return;
 
+            if (currentArmour > 0)
+            {
+                int damageToArmour = Math.Min(amount, currentArmour);
+                currentArmour -= damageToArmour;
+                amount -= damageToArmour;
+            }
+
+            if (amount > 0)
+            {
+                currentHealth = Math.Max(currentHealth - amount, 0);
+            }
+
+            if (currentHealth == 0)
+            {
+                Kill();
+            }
+        }
         public void playerHeal(int amount)
         {
             currentHealth = Math.Min(currentHealth + amount, maxHealth);
         }
-
         public void playerBlock(int amount)
         {
             currentArmour = Math.Min(currentArmour + amount, maxArmour);
         }
-
-        public void playerDamage(int amount)
+        public void playerAttack(Entity target)
         {
             if (!isAlive) return;
-            if (currentArmour == 0)
+            if (TryHit())
             {
-                currentHealth = Math.Max(currentHealth - amount, 0); // use Max to avoid negative health
+                target.Damage(baseDamage);
             }
             else
             {
-                // Not important rn but extra damage dosent transfer over to reg health
-                currentArmour = Math.Max(currentArmour - amount, 0); // also avoid negative armour
+                Terminal.WriteLine("you missed");
             }
-
-            if (currentHealth == 0) Kill();
         }
     }
 }

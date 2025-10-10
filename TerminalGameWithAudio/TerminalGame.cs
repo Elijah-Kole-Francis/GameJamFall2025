@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using TerminalGameWithAudio;
 
 namespace MohawkTerminalGame
@@ -30,10 +31,13 @@ namespace MohawkTerminalGame
         readonly Command commandPlay = new Command("play");
         readonly Command commandLore = new Command("lore");
         readonly Command commandRules = new Command("rules");
-
-
+        // COMMANDS / LEVEL UP
+        readonly Command commandUpgradeAttack = new Command("upgrade attack", new[] { "upgrade 1" });
+        readonly Command commandUpgradeFireBall = new Command("upgrade fireball", new[] { "upgrade 2" });
+        readonly Command commandUpgradeBlock = new Command("upgrade block", new[] { "upgrade 3" });
+        readonly Command commandUpgradeHeal = new Command("upgrade heal", new[] { "upgrade 4" });
         // COMMANDS / FIGHT
-        readonly Command commandAttack = new Command("attack", new[] { "atk", "attk" });
+        readonly Command commandAttack = new Command($"attack", new[] { "atk", "attk" });
         readonly Command commandFireBall = new Command("fireball", new[] { "fire" });
         readonly Command commandBlock = new Command("block", new[] { "blk" });
         readonly Command commandHeal = new Command("heal", new[] { "heal" });
@@ -47,20 +51,28 @@ namespace MohawkTerminalGame
         Dictionary<Command, int> maxCooldowns;
 
         // PLAYER
-        Player player = new Player("PLAYER", 100, 20, 0.75f, 100);
+        Player player = new Player("PLAYER", 100, 20, 0.75f, 0.25f, 100);
 
         int lastAttackDamage = 0;
         int lastFireballDamage = 0;
         int lastSelfDamage = 0;
         int lastBlockValue = 0;
         int lastHealValue = 0;
-        
+
+        int attackLevelIndex = 0;
+        int fireBallLevelIndex = 0;
+        int blockLevelIndex = 0;
+        int healLevelIndex = 0;
+
+        bool didUpgrade = false;
+        bool haventLeveledUpState = false;
+        bool leveledUpState = false;
 
         // ENEMY
         Entity[] enemies = {
-            new Entity("ENEMY 1", 100, 10, 0.5f),   
-            new Entity("ENEMY 2", 100, 20, 0.75f),   
-            new Entity("ENEMY 3", 100, 30, 1f),
+            new Entity("ENEMY 1", 100, 10, 0.5f, 0.25f),   
+            new Entity("ENEMY 2", 100, 20, 0.75f, 0.25f),   
+            new Entity("ENEMY 3", 100, 30, 1f, 0.5f),
         };
 
         int lastEnemyAttackValue = 0;
@@ -100,6 +112,11 @@ namespace MohawkTerminalGame
                 { commandLore, 0 },
                 { commandRules, 0 },
 
+                {commandUpgradeAttack, 0 },
+                {commandUpgradeFireBall, 0 },
+                { commandUpgradeBlock, 0 },
+                { commandUpgradeHeal, 0 },
+
                 { commandAttack, 0 },
                 { commandFireBall, 4 },
                 { commandBlock, 1 },
@@ -113,6 +130,11 @@ namespace MohawkTerminalGame
                 { commandPlay, 0 },
                 { commandLore, 0 },
                 { commandRules, 0 },
+
+                {commandUpgradeAttack, 0 },
+                {commandUpgradeFireBall, 0 },
+                { commandUpgradeBlock, 0 },
+                { commandUpgradeHeal, 0 },
 
                 { commandAttack, 0 },
                 { commandFireBall, 0 },
@@ -153,7 +175,7 @@ namespace MohawkTerminalGame
 
                 // Upgrade
                 case Screen.Upgrade:
-                    PrintUpgradeScreen();
+                    PrintUpgradeScreen();   
                     break;
 
                 // End
@@ -168,8 +190,33 @@ namespace MohawkTerminalGame
 
             Terminal.Clear();
             printPlayerFeedback();
+            if (haventLeveledUpState == true) haventLeveledUp();
+            if (leveledUpState == true) leveledUp();
         }
-        
+        private float GetPlayerActualHitChance()
+        {
+            float hitChange = (float)random.NextDouble() * (player.hitPercentageVariance * 2) - player.hitPercentageVariance;
+            float finalChance = player.hitPercentage - hitChange;
+            return finalChance * 100f;
+        }
+
+        private float GetEnemyActualHitChance(Entity enemy)
+        {
+            float hitChange = (float)random.NextDouble() * (enemy.hitPercentageVariance * 2) - enemy.hitPercentageVariance;
+            float finalChance = enemy.hitPercentage - hitChange;
+            return finalChance * 100f;
+        }
+        private bool DidPlayerHit()
+        {
+            float chance = GetPlayerActualHitChance();
+            return random.Next(0, 100) < chance;
+        }
+
+        private bool DidEnemyHit(Entity enemy)
+        {
+            float chance = GetEnemyActualHitChance(enemy);
+            return random.Next(0, 100) < chance;
+        }
         void ParseInput()
         {
             chosenCommand = null;
@@ -253,6 +300,7 @@ namespace MohawkTerminalGame
                     {
                         currentScreen = Screen.Upgrade;
                         currentEnemyIndex++;
+                        didUpgrade = false;
                     }
 
                     if (currentEnemyIndex >= enemies.Length || player.currentHealth <= 0)
@@ -263,15 +311,50 @@ namespace MohawkTerminalGame
                     break;
 
                 case Screen.Upgrade:
-                    if (chosenCommand == commandYes) currentScreen = Screen.Fight;
-                    break;
+                    if (didUpgrade == false)
+                    {
+                        if (chosenCommand == commandYes) haventLeveledUpState = true;
+                        else if (chosenCommand == commandUpgradeAttack)
+                        {
+                            attackLevelIndex += 1;
+                            didUpgrade = true;
+                        }
+                        else if (chosenCommand == commandUpgradeFireBall)
+                        {
+                            fireBallLevelIndex += 1;
+                            didUpgrade = true;
+                        }
+                        else if (chosenCommand == commandUpgradeBlock)
+                        {
+                            blockLevelIndex += 1;
+                            didUpgrade = true;
+                        }
+                        else if (chosenCommand == commandUpgradeHeal)
+                        {
+                            healLevelIndex += 1;
+                            didUpgrade = true;
+                        }
+                        break;
+                    }
+                    else
+                    {
+                        if (chosenCommand != commandYes) leveledUpState = true;
+                        if (chosenCommand == commandYes) currentScreen = Screen.Fight;
+                        break;
+                    }
+                        
             }
-
-
-            
 
         }
 
+        void haventLeveledUp()
+        {
+            Terminal.WriteLine("You haven't Leveled up yet");
+        }
+        void leveledUp()
+        {
+            Terminal.WriteLine("you already leveled up");
+        }
         void EvaluateFightCommand()
         {
             if (chosenCommand == commandAttack) Attack();
@@ -284,25 +367,65 @@ namespace MohawkTerminalGame
         public void Attack()
         {
             Entity enemy = enemies[currentEnemyIndex];
-            lastAttackDamage = random.Next(15, 26);
-            enemy.Damage(lastAttackDamage);
+            int[] attackLevels = { 20, 25, 30 };
+            int attackValue = attackLevels[attackLevelIndex];
+            int highAttackValue = attackValue + 5;
+            int lowAttackValue = attackValue - 5;
+
+            if (DidPlayerHit())
+            {
+                lastAttackDamage = random.Next(lowAttackValue, highAttackValue);
+                enemy.Damage(lastAttackDamage);
+            }
+            else
+            {
+                lastAttackDamage = -1;
+            }
         }
         public void FireBall()
         {
             Entity enemy = enemies[currentEnemyIndex];
-            lastFireballDamage = random.Next(30, 40);
-            lastSelfDamage = random.Next(10, 15);
-            enemy.Damage(lastFireballDamage);
+            int[] fireBallLevels = { 35, 40, 45 };
+            int fireBallValue = fireBallLevels[fireBallLevelIndex];
+            int highFireBallValue = fireBallValue + 5;
+            int lowFireBallValue = fireBallValue - 5;
+
+            int[] selfDamageLevels = { 10, 15, 20 };
+            int selfDamageValue = selfDamageLevels[fireBallLevelIndex];
+            int highSelfDamageValue = selfDamageValue + 5;
+            int lowSelfDamageValue = selfDamageValue - 5;
+
+            if (DidPlayerHit())
+            {
+                lastFireballDamage = random.Next(lowFireBallValue, highFireBallValue);
+                enemy.Damage(lastFireballDamage);
+            }
+            else
+            {
+                lastFireballDamage = -1;
+            }
+
+            lastSelfDamage = random.Next(lowSelfDamageValue, highSelfDamageValue);
             player.playerDamage(lastSelfDamage);
         }
         public void Block()
         {
-            lastBlockValue = random.Next(10, 25);
+            int[] blockLevels = [15, 20, 30];
+            int blockValue = blockLevels[blockLevelIndex];
+            int highBlockValue = blockValue + 5;
+            int lowBlocklValue = blockValue - 5;
+
+            lastBlockValue = random.Next(lowBlocklValue, highBlockValue);
             player.playerBlock(lastBlockValue);
         }
         public void Heal()
         {
-            lastHealValue = random.Next(10, 15);
+            int[] healLevels = [15, 20, 30];
+            int healValue = healLevels[healLevelIndex];
+            int highBlockValue = healValue + 5;
+            int lowBlocklValue = healValue - 5;
+
+            lastHealValue = random.Next(lowBlocklValue, highBlockValue);
             player.playerHeal(lastHealValue);
         }
 
@@ -347,6 +470,7 @@ namespace MohawkTerminalGame
         void PrintRulesScreen()
         {
             currentCommands = new[] { commandYes };
+            
 
             Terminal.WriteLine("This is the Rule Screen"); // Placeholder
             Terminal.WriteLine("Return to Main Menu?");
@@ -362,10 +486,16 @@ namespace MohawkTerminalGame
 
         void PrintUpgradeScreen()
         {
-            currentCommands = new[] { commandYes };
+            Terminal.WriteLine("\nUPGRADE SCREEN", ConsoleColor.Yellow, ConsoleColor.Black);
 
-            Terminal.WriteLine("This is the Upgrade Screen"); // Placeholder
-            Terminal.WriteLine("Return to fight?"); // Placeholder
+            currentCommands = new[]
+            {
+                commandUpgradeAttack,
+                commandUpgradeFireBall,
+                commandUpgradeBlock,
+                commandUpgradeHeal,
+                commandYes
+            };
         }
 
         void PrintEndScreen()
@@ -403,7 +533,7 @@ namespace MohawkTerminalGame
                     $"\tHealth: {healthBar}", ConsoleColor.Green, ConsoleColor.Black);
             }
 
-            Terminal.WriteLine($"\tHit %:  {player.hitPercentage * 100}%\n", ConsoleColor.Green, ConsoleColor.Black);
+            Terminal.WriteLine($"\tHit %:  {GetPlayerActualHitChance():F1}%", ConsoleColor.Green, ConsoleColor.Black);
             Terminal.WriteLine("", ConsoleColor.Black, ConsoleColor.Black);
         }
 
@@ -429,22 +559,88 @@ namespace MohawkTerminalGame
                     $"\tHealth: {enemyhealthBar}");
             }
 
-            Terminal.WriteLine($"\tHit %: {currentEnemy.hitPercentage * 100}%\n", ConsoleColor.Red, ConsoleColor.Black);
+            Terminal.WriteLine($"\tHit %: {GetEnemyActualHitChance(currentEnemy):F1}%", ConsoleColor.Red, ConsoleColor.Black);
             Terminal.WriteLine("", ConsoleColor.Black, ConsoleColor.Black);
         }
 
         void PrintOptionsText()
         {
             Terminal.WriteLine("\nCOMMANDS:", ConsoleColor.Yellow, ConsoleColor.Black);
+
             foreach (Command command in currentCommands)
             {
-                
                 int remainingCooldown = cooldowns[command];
+                int maxCooldown = maxCooldowns[command];
+                string extraInfo = "";
+
+                // === ATTACK INFO ===
+                if (command == commandAttack)
+                {
+                    int[] attackLevels = [20, 25, 30];
+                    int attackValue = attackLevels[Math.Clamp(attackLevelIndex, 0, attackLevels.Length - 1)];
+                    int highAttackValue = attackValue + 5;
+                    int lowAttackValue = attackValue - 5;
+
+                    extraInfo = $"(DAMAGE: {lowAttackValue}-{highAttackValue})";
+                }
+
+                // === FIREBALL INFO ===
+                else if (command == commandFireBall)
+                {
+                    int[] fireBallLevels = [35, 40, 45];
+                    int fireBallValue = fireBallLevels[Math.Clamp(fireBallLevelIndex, 0, fireBallLevels.Length - 1)];
+                    int highFireBallValue = fireBallValue + 5;
+                    int lowFireBallValue = fireBallValue - 5;
+
+                    int[] selfDamageLevels = [10, 15, 20];
+                    int selfDamageValue = selfDamageLevels[Math.Clamp(fireBallLevelIndex, 0, selfDamageLevels.Length - 1)];
+                    int highSelfDamage = selfDamageValue + 5;
+                    int lowSelfDamage = selfDamageValue - 5;
+
+                    extraInfo = $"(DAMAGE: {lowFireBallValue}-{highFireBallValue}) (SELFDAMAGE: {lowSelfDamage}-{highSelfDamage})";
+                }
+
+                // === BLOCK INFO ===
+                else if (command == commandBlock)
+                {
+                    int[] blockLevels = [15, 20, 30];
+                    int blockValue = blockLevels[Math.Clamp(blockLevelIndex, 0, blockLevels.Length - 1)];
+                    int highBlockValue = blockValue + 5;
+                    int lowBlockValue = blockValue - 5;
+
+                    extraInfo = $"(BLOCK: {lowBlockValue}-{highBlockValue})";
+                }
+
+                // === HEAL INFO ===
+                else if (command == commandHeal)
+                {
+                    int[] healLevels = [15, 20, 30];
+                    int healValue = healLevels[Math.Clamp(healLevelIndex, 0, healLevels.Length - 1)];
+                    int highHealValue = healValue + 5;
+                    int lowHealValue = healValue - 5;
+
+                    extraInfo = $"(HEAL: {lowHealValue}-{highHealValue})";
+                }
+
+                // === UPGRADE COMMANDS ===
+                else if (command == commandUpgradeAttack)
+                    extraInfo = $"(CURRENT LVL: {attackLevelIndex + 1})";
+                else if (command == commandUpgradeFireBall)
+                    extraInfo = $"(CURRENT LVL: {fireBallLevelIndex + 1})";
+                else if (command == commandUpgradeBlock)
+                    extraInfo = $"(CURRENT LVL: {blockLevelIndex + 1})";
+                else if (command == commandUpgradeHeal)
+                    extraInfo = $"(CURRENT LVL: {healLevelIndex + 1})";
+
+                // === COOLDOWN COLOR ===
                 ConsoleColor color = remainingCooldown > 0 ? ConsoleColor.Red : ConsoleColor.Yellow;
-                string printTexts = remainingCooldown > 0 ? $"{command.name.ToUpper()} (COOLDOWN: {remainingCooldown})" : $"{command.name.ToUpper()}";
-                Terminal.WriteLine($"   {printTexts}", color, ConsoleColor.Black);
-                
+                string cooldownText = maxCooldown > 0 ? $"(COOLDOWN: {remainingCooldown})" : "";
+
+                // === FINAL OUTPUT ===
+                string printText = $"{command.name.ToUpper()} {extraInfo} {cooldownText}";
+                Terminal.WriteLine($"   {printText}", color, ConsoleColor.Black);
             }
+
             Terminal.WriteLine("\n", ConsoleColor.Black, ConsoleColor.Black);
         }
         void printPlayerFeedback()
@@ -453,11 +649,18 @@ namespace MohawkTerminalGame
 
             if (chosenCommand == commandAttack)
             {
-                Terminal.WriteLine($"Enemy took {lastAttackDamage} damage.");
+                if (lastAttackDamage == -1)
+                    Terminal.WriteLine("Player missed!");
+                else
+                    Terminal.WriteLine($"Enemy took {lastAttackDamage} damage.");
             }
             else if (chosenCommand == commandFireBall)
             {
-                Terminal.WriteLine($"Enemy took {lastFireballDamage} damage.");
+                if (lastFireballDamage == -1)
+                    Terminal.WriteLine("Player missed the fireball!");
+                else
+                    Terminal.WriteLine($"Enemy took {lastFireballDamage} damage.");
+
                 Terminal.WriteLine($"Player took {lastSelfDamage} damage.");
             }
             else if (chosenCommand == commandBlock)
@@ -471,7 +674,11 @@ namespace MohawkTerminalGame
 
             if (enemyIntention == commandAttack)
             {
-                Terminal.WriteLine($"Enemy attacked player for {lastEnemyAttackValue} damage.");
+                Entity enemy = enemies[currentEnemyIndex];
+                if (DidEnemyHit(enemy))
+                    Terminal.WriteLine($"Enemy attacked player for {lastEnemyAttackValue} damage.");
+                else
+                    Terminal.WriteLine("Enemy missed!");
             }
             else if (enemyIntention == commandHeal)
             {
