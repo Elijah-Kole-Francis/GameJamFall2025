@@ -70,9 +70,10 @@ namespace MohawkTerminalGame
 
         // ENEMY
         Entity[] enemies = {
-            new Entity("ENEMY 1", 100, 10, 0.5f, 0.25f),   
-            new Entity("ENEMY 2", 100, 20, 0.75f, 0.25f),   
-            new Entity("ENEMY 3", 100, 30, 1f, 0.5f),
+            new Entity("Imp", 100, 10, 0.5f, 0.25f),   
+            new Entity("Skeleton", 100, 20, 0.5f, 0.25f),   
+            new Entity("Bear", 100, 30, 0.5f, 0.35f),
+            new Entity("Dragon", 100, 30, 1f, 0.4f),
         };
 
         int lastEnemyAttackValue = 0;
@@ -420,7 +421,7 @@ namespace MohawkTerminalGame
         }
         public void Heal()
         {
-            int[] healLevels = [15, 20, 30];
+            int[] healLevels = [100, 20, 30];
             int healValue = healLevels[healLevelIndex];
             int highBlockValue = healValue + 5;
             int lowBlocklValue = healValue - 5;
@@ -454,6 +455,7 @@ namespace MohawkTerminalGame
 
         void PrintMainMenuScreen()
         {
+            drawStart();
             currentCommands = new[] { commandPlay, commandLore, commandRules };
             
             Terminal.WriteLine("This is the Main Menu"); // Placeholder
@@ -482,12 +484,13 @@ namespace MohawkTerminalGame
 
             PrintPlayerText();
             PrintEnemyText();
+            drawEnemy();
         }
 
         void PrintUpgradeScreen()
         {
             Terminal.WriteLine("\nUPGRADE SCREEN", ConsoleColor.Yellow, ConsoleColor.Black);
-
+            drawShop();
             currentCommands = new[]
             {
                 commandUpgradeAttack,
@@ -687,7 +690,277 @@ namespace MohawkTerminalGame
 
             Terminal.WriteLine("\n");
         }
+        private void drawEnemy()
+        {
+            switch (currentEnemyIndex)
+            {
+                case 0:
+                {
+                    Terminal.WriteLine(".................##.........................#.#+.................");
+                    Terminal.WriteLine("................#*##......................##.+#+.................");
+                    Terminal.WriteLine("................#+*###..................##..+##+.................");
+                    Terminal.WriteLine("................##***####..########.####..++*#+..................");
+                    Terminal.WriteLine("................##*++*+########.++###.+++++++#*..................");
+                    Terminal.WriteLine(".................#+*++++++++++******.+++++++#+...................");
+                    Terminal.WriteLine("..................#+++++++++++++++*++++++++##+...................");
+                    Terminal.WriteLine("..................##*++++++++++*++++++++++##.....................");
+                    Terminal.WriteLine("...................##*++++++++++++++++++##++.....................");
+                    Terminal.WriteLine("....................###*+++++++++++++++*#+.......................");
+                    Terminal.WriteLine("................###...#+*++++*++++++++*##....#.#+................");
+                    Terminal.WriteLine("...............##*#....#++**++++++++++*##...##.#+................");
+                    Terminal.WriteLine("...............##*#....#++**++++++++++*##...##.#+................");
+                    Terminal.WriteLine("...............##*++##.#+*###+++++###++##.##.++#+................");
+                    Terminal.WriteLine("...............##*+++#.#+####++++####++####.*++#.................");
+                    Terminal.WriteLine("...............##*+++++.+####.+*+####.++*#.++*+#.................");
+                    Terminal.WriteLine("...............##**+*++++*## +*+++## +*+*.++**##.................");
+                    Terminal.WriteLine("...............##**+**+++*+*++++++***+++*++***+#.................");
+                    Terminal.WriteLine("...............##**+***++*++++*+++*++++*++**.##*.................");
+                    Terminal.WriteLine("................##*++***+*+++*+++++*++.*+*+####++................");
+                    Terminal.WriteLine(".................####*+++*+++*++++++++.*####*+...................");
+                    Terminal.WriteLine("....................####+*+#+++++++#+#+##*++.....................");
+                    Terminal.WriteLine(".......................##*####++++#+# ##.........................");
+                    Terminal.WriteLine(".......................##*########+##.#*.........................");
+                    Terminal.WriteLine(".......................##*### ###+##.+#+.........................");
+                    Terminal.WriteLine("........................#++*#######.+##+.........................");
+                    Terminal.WriteLine("........................#++**#####.+*##..........................");
+                    Terminal.WriteLine("........................#+*+**++++**+##..........................");
+                    Terminal.WriteLine("........................#.*+++*****++##..........................");
+                    Terminal.WriteLine("........................#+*++++*+++++##..........................");
+                    Terminal.WriteLine("........................#+*++++*++++++#..........................");
+                    Terminal.WriteLine(".............######....##+*++++*++++++#################..........");
+                    Terminal.WriteLine("...........#############.+*++++*++++++*+..###.++++++++##.........");
+                    Terminal.WriteLine(".........###++++++**##..***+++++++++++*****************#........#");
+                    Terminal.WriteLine("###########++**++++******+*+++++++++++*++++***+++++++**##########");
+                    break;
+                }
+                case 1:
+                {
+                    Terminal.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                    Terminal.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                    Terminal.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                    Terminal.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                    Terminal.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                    Terminal.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                    Terminal.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                    Terminal.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                    Terminal.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                    Terminal.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                    Terminal.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                    Terminal.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                    Terminal.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                    Terminal.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                    Terminal.WriteLine("+++++++++++++++++++++++++++++++     +++++++++++++++++++++++++++++");
+                    Terminal.WriteLine("+++++++++++++++++++++++++++++        ++++++++++++++++++++++++++++");
+                    Terminal.WriteLine("+++++++++++++++++++++++++++++ ;     + +++++++++++++++++++++++++++");
+                    Terminal.WriteLine("++++++++++++++++++++++++++++  +     + ;++++++++++++++++++++++++++");
+                    Terminal.WriteLine("++++++++++++++++++++++++++++  +        ++++++++++++++++++++++++++");
+                    Terminal.WriteLine("+++++++++++++++++++++++++++         ;  ++++++++++++++++++++++++++");
+                    Terminal.WriteLine("+++++++++++++++++++++++++++ +;     +++ ++++++++++++++++++++++++++");
+                    Terminal.WriteLine("++++++++++++++++++++++++++++++++  ++++ ++++++++++++++++++++++++++");
+                    Terminal.WriteLine("+++++++++++++++++++++++++++ ++++;++++++++++++++++++++++++++++++++");
+                    Terminal.WriteLine("+++++++++++++++++++++++++++ ;++;++ ++ +++++++++++++++++++++++++++");
+                    Terminal.WriteLine("++++++++++++++++++++++++++++++ +++   + ++++++++++++++++++++++++++");
+                    Terminal.WriteLine("++++++++++++++++++++++++++++ ++     +++++++++++++++++++++++++++++");
+                    Terminal.WriteLine("++++++++++++++++++++++++++++ ++     +;;++++++++++++++++++++++++++");
+                    Terminal.WriteLine("++++++++++++++++++++++++++++ ++;+++++ +++++++++++++++++++++++++++");
+                    Terminal.WriteLine("++++++++++++++++++++++++++++  ;    +  +++++++++++++++++++++++++++");
+                    Terminal.WriteLine("+++++++++++++++++++++++++++++ +    + ++++++++++++++++++++++++++++");
+                    Terminal.WriteLine("++++++++++++++++++++++++++++++;;  +;+ +++++++++++++++++++++++++++");
+                    Terminal.WriteLine("+++++++++++++++++++++++++++++   +;    +++++++++++++++++++++++++++");
+                    Terminal.WriteLine("+++++++++++++++++++++++++++++ ;     + +++++++++++++++++++++++++++");
+                    Terminal.WriteLine("+++++++++++++++++++++++++++++  ++++ +;+++++++++++++++++++++++++++");
+                    Terminal.WriteLine("++++++++++++++++++   ;+++++ +       +;;  +       ++++++++++++++++");
+                    break;
+                }
+                case 2:
+                {
+                    Terminal.WriteLine("...............................................................");
+                    Terminal.WriteLine("...............................................................");
+                    Terminal.WriteLine("...............................................................");
+                    Terminal.WriteLine("...............................................................");
+                    Terminal.WriteLine("...............................................................");
+                    Terminal.WriteLine("...............................................................");
+                    Terminal.WriteLine("...............................................................");
+                    Terminal.WriteLine("..................................;**+;........................");
+                    Terminal.WriteLine("....................;**;..........******.......................");
+                    Terminal.WriteLine("..................;*   +;.******;+**+ ;**......................");
+                    Terminal.WriteLine("..................*   **++            .*.......................");
+                    Terminal.WriteLine("..................+++   ..++.  .     ; * ;.....................");
+                    Terminal.WriteLine("................;*+.  ;.     +*      *  ;;.....................");
+                    Terminal.WriteLine("...............*. .        **.      +.; *......................");
+                    Terminal.WriteLine("..............+  *        .***      +.,*,;.....................");
+                    Terminal.WriteLine("........****.*             *;*     * ;*;+;.....................");
+                    Terminal.WriteLine("......*.   .**  ;           , ,   ,.+ *;.......................");
+                    Terminal.WriteLine("......*      *                *   *****;.......................");
+                    Terminal.WriteLine(".....**   ** * ,.     ;          .*****;.......................");
+                    Terminal.WriteLine("....*,*  .***;         *         .******.......................");
+                    Terminal.WriteLine("...+* +   ***,        ;;          ,*****.......................");
+                    Terminal.WriteLine("..;*   *   ;;*   ;     ++  .        ****+......................");
+                    Terminal.WriteLine("..*     ,****       .  **  .      .  ****;+*...................");
+                    Terminal.WriteLine(".*             ,, *                   ****+*...................");
+                    Terminal.WriteLine(";;           *  *  *     *         ;  ***** +..................");
+                    Terminal.WriteLine("*            *   * +      ;         ;,  +, *.*.................");
+                    Terminal.WriteLine("***+         ** ..            *;      *  .* ,*+................");
+                    Terminal.WriteLine("    *        ,; ..,             .;*;   .****. *................");
+                    Terminal.WriteLine("   *          .;  ;   *              *;    +*;.................");
+                    Terminal.WriteLine("  +   ,       .*      +            ***;* .*+...................");
+                    Terminal.WriteLine(" . **         ** +     *         ;* ,;..;;.....................");
+                    Terminal.WriteLine(" **        .   * *     ,;   * * *.   *.........................");
+                    Terminal.WriteLine("           ;    **      .+  * **     *.........................");
+                    Terminal.WriteLine(" +               ;.       * +++       *........................");
+                    Terminal.WriteLine(" .        ;        *       ***+       *;.......................");
+                    break;
+                }
+                case 3:
+                {
+                    Terminal.WriteLine("                                                                 ");
+                    Terminal.WriteLine("                                                                 ");
+                    Terminal.WriteLine("                                                                 ");
+                    Terminal.WriteLine("                                                                 ");
+                    Terminal.WriteLine("                                                                 ");
+                    Terminal.WriteLine("                                     +                           ");
+                    Terminal.WriteLine("                                     +                           ");
+                    Terminal.WriteLine("                                     ++++  +                     ");
+                    Terminal.WriteLine("                                     +++++ ++                    ");
+                    Terminal.WriteLine("                            +      ++ +++ ++ ++                  ");
+                    Terminal.WriteLine("                      +   +++      ++  +++ ++ ++                 ");
+                    Terminal.WriteLine("                     ++ +++++      +++++ + +  ++++               ");
+                    Terminal.WriteLine("                   +++++++++  +     +++     +  +++++             ");
+                    Terminal.WriteLine("                   +  ++ ++  ++      +++  +++ ++ +  +++++        ");
+                    Terminal.WriteLine("                  ++  +   + +++   +   +  +    ++ +   ++++        ");
+                    Terminal.WriteLine("              +++    +     +++    +++++ ++        +++++ +        ");
+                    Terminal.WriteLine("         ++ ++    ++ +++   ++     +++++    +++++++++ +++         ");
+                    Terminal.WriteLine("        +++++   + ++   ++  +        +++    +++++++++++  +        ");
+                    Terminal.WriteLine("         ++ ++   +         +  ++      ++    + +++++++++++++      ");
+                    Terminal.WriteLine("         +++  ++++ +++    ++++++  ++++++  + +++++  ++++ ++ +     ");
+                    Terminal.WriteLine("         + ++++++++++++    ++++    ++++  ++  ++++     +++++ +    ");
+                    Terminal.WriteLine("          +++++++++++ +             ++ ++ +  + ++++++++  +++++   ");
+                    Terminal.WriteLine("      ++++++++++++++++  +++++++     +  ++ +   + ++++       ++++  ");
+                    Terminal.WriteLine("      ++++++     ++++   +  ++++   +++ ++   +++ ++ +++       +++++");
+                    Terminal.WriteLine("    +++++  +++++++++    +++  +    +++     +  ++ +++++            ");
+                    Terminal.WriteLine("   +++++     +++++++   ++++  +    ++     ++   ++ ++++            ");
+                    Terminal.WriteLine("  +++++       ++ ++  +++  ++++++  ++    +++++++++  +             ");
+                    Terminal.WriteLine("   +         ++++   ++   +   +++ +++       +++++++++             ");
+                    Terminal.WriteLine("             ++++  +   ++     ++ +++          ++                 ");
+                    Terminal.WriteLine("              ++  +++  +++    ++ ++++       + +                  ");
+                    Terminal.WriteLine("              ++++ +++   +    ++ +++++       ++                  ");
+                    Terminal.WriteLine("                  +  +        ++++++    ++ + +                   ");
+                    Terminal.WriteLine("                   + +       +++++++  ++   + +                   ");
+                    Terminal.WriteLine("                   +        ++ + ++  +       ++                  ");
+                    Terminal.WriteLine("                   ++ + +    + ++++  +    +  ++                  ");
+                    break;
+                }
+            }
+        }
 
+        void drawStart()
+        {
+            Terminal.WriteLine("                            ####                                 ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("                            #####                                ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("                           #######                               ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("                          ########                               ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("                          #########                              ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("                         ###########                             ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("                        ###.+##.+####                            ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("                      #####+++++++####                           ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("                     #####+++++++++#####                         ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("                   #####;+++++++++++#####                        ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("                 ######+++++++++++++++######                     ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("          ###########++++#######++#+++++##########               ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("          ########.#############+##################              ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("          ##+##+++##;####+;#####+##########++######              ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("          ######+###+;;;;;;#####+##;;;;;;###+######              ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("          ########+;;;;;;;;##++++##;;;;;;;;########              ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("          #######+;;;;;;;;;##++++##;;;;;;;;##+#####              ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("          #####.#;;;;;;;;;;##++++##;;;;;;;;;###++##              ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("          ##+##;+;;;;;;;;;;#####+##;;;;;;;;;##+++##              ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("          ##+###;;;;;;;;;;;#####+##;;;;;;;;;##+++##              ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("          ##++##;;;;;;;;;;;#####+##;;;;;;;;;##+++##              ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("          ##++##;;;;;;;;;;;##+#.+##;;#########+++##              ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("          ##++#######;;;;;##;++++##;;;;;;;;;##+++##              ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("          ##++##############+++++######+++++#++++##              ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("          ###+++#########;;+++++++##;########;++###              ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("          ###+++###+++####+++++++++###+++####+++###              ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("          ###+++###+++####+++++++++###+++####+++##.              ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("           ##+++###+++###;++++++++##+#####+;++++##               ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("           #####++++++++++++++++++++++++++++######               ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("           #####+######;###+++++++#;;;;;;;########               ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("           #### ############+++++############## ##               ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("           ###+###;;;;;;;;##+++++##;;;;;;;###++###               ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("            ##+####;;;;;;;##+++++##;;;;;;####++##                ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("            ##+++##;;;;;;;##+++++##;;;;;;##+;++##                ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("            ###+####;;;;;;##+###+##;;;;;;###++###                ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("            ###+++##;;;;;;######+##;;;;;###;++###                ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("             ##+++##;;;;;;##+###+##;;;;;##+++###                 ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("             ###++###;;;;;##+###+##;;;;####++###                 ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("              #####+#;;;;;##+++++##;;;;#;###+##.                 ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("              ########;;;;##+++++##;;;;########                  ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("              ########;;;;##+++++##;;;########;                  ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("               ###+++##;;;##+###+##;;;########                   ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("                ###++##;;;##+#+#+##;;###++###`                   ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("                ####++##;;##+###+##;;##+;####                    ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("                 ####+###;##+++++##;###+####                     ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("                  ####+#####+++++#####+####                      ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("                   #####+##;++++++########                       ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("                     #######++++++######;                        ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("                       ################                          ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine("                          ##########                             ", ConsoleColor.Gray, ConsoleColor.Black);
+        }
+        void drawShop()
+        {
+            Terminal.WriteLine("                                                             ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("                                                             ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("                         #############                       ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("                       ####         #####                    ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("                     ###  ############;####                  ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("                   ### ####+        ####+###                 ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("                  ### ##### ######     ###+###               ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("                 #####+###############   #####               ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("                ## ##;### + ######; #### ######              ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("               ## ##;## #############+#### ##+##             ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("              ## #########;         ###+## + ####            ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("             ##### #####.            # ####  ##+##           ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("             ####;#####             ######+#####+#           ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("            ## #+####+             ##### ##+## ####          ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("            ########+    ##       ####+## #### ##+#          ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("            # #+# ##    ####      ###++### #### ####         ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("           ########    ######   ####++++### #+# ##+#         ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("           # #+# #+ ##### +########++++++## #### # #         ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("           # ##### ######+++#####.+++++++## ##+# ####        ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("          ######## ###+++++++++++++++++++##  ########        ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("          ##### #; ##++++++++++++++++++++##  #### #;#        ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("          # #;# #  ##++++++++++++++++++++##   #;# # #        ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("          # # # #  ##++++++++++++++++++++##   # # # #        ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("          # # # #  ##++++++++++++++++++++##   # # # #        ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("          # # # #  ##++++++++++++++++++++##   # # # #        ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("          # # # #  ##++++++++++++++++++++##   # #.# #        ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("          # # # #  ##++++++++++++++++++++##   # #.# #        ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("          # # # #  ##++++++++++++++++++++##   # #.# #        ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("          ######## #########+#######+######   # #.# #        ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("          ########  #########++#######;###+   # #####        ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("          #### #+#     # ## +#####;##+##+#   ########        ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("           #.# ####    # +#.#### ######+##   ##### ##        ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("           ######+#    # + +###  ### #####   # #+# #         ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("           #### ####   # + +### #### ### .  ########         ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("            #.####+##  ### +### #####  ;   ###### #+         ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("            #### #####   # #### ####+      ########          ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("             #### #####  ###########      ## #+###+          ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("             ##+####+###   ;###+ ###    #####+# ##           ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("              ####  ##+###    #####;   ####### ##;           ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("               ##### #######         ### ##+####+            ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("                ##+ #####+############ ###+#####             ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("                ###+##  ####;  ##    ###+######              ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("                  ##+###  ############+ ######               ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("                   #######     ##;.  #######+                ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("                    ###+ ############## ###.                 ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("                      ####+ #######  ####;                   ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("                        ###############.                     ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("                            #######;                         ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("                                                             ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("                                                             ", ConsoleColor.Yellow, ConsoleColor.Black);
+
+
+        }
         private string HealthDisplayText(int health, int maxHealth)
         {
             float healthPercentage = (float)health / maxHealth;
