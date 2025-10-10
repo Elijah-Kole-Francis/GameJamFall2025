@@ -458,14 +458,19 @@ namespace MohawkTerminalGame
             drawStart();
             currentCommands = new[] { commandPlay, commandLore, commandRules };
             
-            Terminal.WriteLine("This is the Main Menu"); // Placeholder
+            Terminal.WriteLine( "\r\nWelcome to Terminal Knight, \r\n" +
+                                "if you don't know how to play type 3"); // Placeholder
         }
 
         void PrintLoreScreen()
         {
             currentCommands = new[] { commandYes };
 
-            Terminal.WriteLine("This is the Lore Screen"); // Placeholder
+            Terminal.WriteLine( "Welcome, player. \r\n" +
+                                "This is the Terminal Knight, a one-way battle into the heart of the dragon’s lair. \r\n"+
+                                "Slay every foe to strengthen your resolve, reach the lair of the Dragon, \r\n" +
+                                "and claim the legendary treasure within its hoard.\r\n");
+
             Terminal.WriteLine("Return to Main Menu?");
         }
 
@@ -474,7 +479,16 @@ namespace MohawkTerminalGame
             currentCommands = new[] { commandYes };
             
 
-            Terminal.WriteLine("This is the Rule Screen"); // Placeholder
+            Terminal.WriteLine("Hello, player. \r\n" +
+                "Everytime you enter a new screen you will have a list of commands you can do.\r\n" +
+                "To do the command of your choice you have to either type out your selected commands name\r\n" +
+                "or type the corresponding number \r\n" +
+                "e.g.\r\n" +
+                "\t(1)ATTACK\r\n" +
+                "\t(2)FIREBALL\r\n" +
+                "\t(3)BLOCK\r\n" +
+                "\t(4)HEAL\r\n" +
+                "\tect.\r\n");
             Terminal.WriteLine("Return to Main Menu?");
         }
 
@@ -503,7 +517,12 @@ namespace MohawkTerminalGame
 
         void PrintEndScreen()
         {
-            string endText = (player.currentHealth > 0) ? "You won!" : "You died!";
+            string endText = (player.currentHealth > 0) ?   "You won! \r\n" +
+                                                            "You defeated the dragon and all of his horde\r\n" +
+                                                            "Now that you have riches beyond imagine what will life bring you" :
+                                                            "You died!\r\n" +
+                                                            "Your body cold and lifeless destined to rot into nothing\r\n" +
+                                                            "as your names forgotten to time";
 
             Terminal.WriteLine(endText);
         }
@@ -855,59 +874,74 @@ namespace MohawkTerminalGame
 
         void drawStart()
         {
-            Terminal.WriteLine("                            ####                                 ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("                            #####                                ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("                           #######                               ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("                          ########                               ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("                          #########                              ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("                         ###########                             ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("                        ###.+##.+####                            ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("                      #####+++++++####                           ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("                     #####+++++++++#####                         ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("                   #####;+++++++++++#####                        ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("                 ######+++++++++++++++######                     ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("          ###########++++#######++#+++++##########               ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("          ########.#############+##################              ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("          ##+##+++##;####+;#####+##########++######              ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("          ######+###+;;;;;;#####+##;;;;;;###+######              ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("          ########+;;;;;;;;##++++##;;;;;;;;########              ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("          #######+;;;;;;;;;##++++##;;;;;;;;##+#####              ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("          #####.#;;;;;;;;;;##++++##;;;;;;;;;###++##              ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("          ##+##;+;;;;;;;;;;#####+##;;;;;;;;;##+++##              ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("          ##+###;;;;;;;;;;;#####+##;;;;;;;;;##+++##              ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("          ##++##;;;;;;;;;;;#####+##;;;;;;;;;##+++##              ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("          ##++##;;;;;;;;;;;##+#.+##;;#########+++##              ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("          ##++#######;;;;;##;++++##;;;;;;;;;##+++##              ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("          ##++##############+++++######+++++#++++##              ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("          ###+++#########;;+++++++##;########;++###              ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("          ###+++###+++####+++++++++###+++####+++###              ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("          ###+++###+++####+++++++++###+++####+++##.              ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("           ##+++###+++###;++++++++##+#####+;++++##               ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("           #####++++++++++++++++++++++++++++######               ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("           #####+######;###+++++++#;;;;;;;########               ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("           #### ############+++++############## ##               ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("           ###+###;;;;;;;;##+++++##;;;;;;;###++###               ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("            ##+####;;;;;;;##+++++##;;;;;;####++##                ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("            ##+++##;;;;;;;##+++++##;;;;;;##+;++##                ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("            ###+####;;;;;;##+###+##;;;;;;###++###                ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("            ###+++##;;;;;;######+##;;;;;###;++###                ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("             ##+++##;;;;;;##+###+##;;;;;##+++###                 ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("             ###++###;;;;;##+###+##;;;;####++###                 ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("              #####+#;;;;;##+++++##;;;;#;###+##.                 ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("              ########;;;;##+++++##;;;;########                  ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("              ########;;;;##+++++##;;;########;                  ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("               ###+++##;;;##+###+##;;;########                   ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("                ###++##;;;##+#+#+##;;###++###`                   ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("                ####++##;;##+###+##;;##+;####                    ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("                 ####+###;##+++++##;###+####                     ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("                  ####+#####+++++#####+####                      ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("                   #####+##;++++++########                       ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("                     #######++++++######;                        ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("                       ################                          ", ConsoleColor.Gray, ConsoleColor.Black);
-            Terminal.WriteLine("                          ##########                             ", ConsoleColor.Gray, ConsoleColor.Black);
+            Terminal.WriteLine( "               +*******+                                       \r\n" +
+                                "              ***`  *******                                    \r\n" +
+                                "             **.  ***     ***                                  \r\n" +
+                                "            +**  **         **                                 \r\n" +
+                                "            **, *`  ******.  *                                 \r\n" +
+                                "            ** ;* .***********.                                \r\n" +
+                                "            ** *, *****+   ;***                                \r\n" +
+                                "            ** *  ****      ***                                \r\n" +
+                                "            ** * ;***,     *.***                               \r\n" +
+                                "            +* * +***     *. * *.                              \r\n" +
+                                "            ;* * +***    *+  *  *                              \r\n" +
+                                "             *`* +**`   `*  .*  .*                             \r\n" +
+                                "             *** +**,   *`  .*   *.                            \r\n" +
+                                "              **,+**   `*   .*    *                            \r\n" +
+                                "              **`;**   *`   +*,   *.                           \r\n" +
+                                "              +**;**   *    ***    *                           \r\n" +
+                                "              ***;*.  ;*   .***    *.                          \r\n" +
+                                "             `***;*,  *`   ****+   ,*                          \r\n" +
+                                "             ****.*   *   .*****    *`                         \r\n" +
+                                "       **   ****,.*   *  ,*******`  `*                         \r\n" +
+                                "       *+*;***** ;*  ;* .*************                         \r\n" +
+                                "       ,* ****;  +`  ;****************.+                       \r\n" +
+                                "        *        *   ;****** *+*******.*.                      \r\n" +
+                                "        **      *;  ;******  *. ..`    `+                      \r\n" +
+                                "         **`  .*;   +`       ;.     `;***                      \r\n" +
+                                "          .***;     .***.    ..  .*****                        \r\n" +
+                                "                      *****;,.; *******;                       \r\n" +
+                                "                      *******.* *******                        \r\n" +
+                                "                      *.*****.* ***.  *                        \r\n" +
+                                "                      *`  .** *      `*                        \r\n" +
+                                "                      `* `    *      .;                        \r\n" +
+                                "                       * *`.* * *`.. *.                        \r\n" +
+                                "                       *`.;,* * *.`. *                         \r\n" +
+                                "                       ;;.* * * *.`+ *                         \r\n" +
+                                "                       ,*   * * ;` , *                         \r\n" +
+                                "                        **`   *     ;*                         \r\n" +
+                                "                         `**` *  .***                          \r\n" +
+                                "                          *,***.**  *,,                        \r\n" +
+                                "                      ;****; `**   ;*****                      \r\n" +
+                                "                      *`*****,   `****+ *,  `                  \r\n" +
+                                "                 **`  *  +***********, `*  ***.                \r\n" +
+                                "                 *,*****  .*********   ***** .***              \r\n" +
+                                "              ,***,****+*    ;+++.    *****  ***.**            \r\n" +
+                                "             ** **;+**  ,**         `**  **  ***  `*,          \r\n" +
+                                "            **  ***.*     ;**********    `; ,**+    *          \r\n" +
+                                "           ;*   ;** *         `*.,       *; ,***    `*         \r\n" +
+                                "           *     **,*`    ,;;``*         *  `***`   **         \r\n" +
+                                "           *    ***`;+   ************;   *` ,*********         \r\n" +
+                                "           ********` *  ;*.*  `*   *.*   .;  **********        \r\n" +
+                                "         .*********, * ,*` *  `*  +* *;   *   ****    **       \r\n" +
+                                "         *********.  * *.  +. `* ,*  ,*   **      ****`        \r\n" +
+                                "         *          *`;*   `*******   *;   .******* *          \r\n" +
+                                "         `***;.;***** **************   *    *       *          \r\n" +
+                                "            ;***+  *  **.  *************;   *       *          \r\n" +
+                                "            ++     *  ;*   ;*******   `*    *       *          \r\n" +
+                                "            *      *   *`   ******    *,    *       *          \r\n" +
+                                "            *      *    *  *` ** .*  *.     *      `*          \r\n" +
+                                "            *,     *    `**,  .;  .***     ,*      **          \r\n" +
+                                "           +**    ,*     .*   .;   .*      ,+     ***          ", ConsoleColor.DarkGray, ConsoleColor.Black);
+
         }
         void drawShop()
         {
+            Terminal.WriteLine("                                                             ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("                                                             ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("                                                             ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("                                                             ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("                                                             ", ConsoleColor.Yellow, ConsoleColor.Black);
             Terminal.WriteLine("                                                             ", ConsoleColor.Yellow, ConsoleColor.Black);
             Terminal.WriteLine("                                                             ", ConsoleColor.Yellow, ConsoleColor.Black);
             Terminal.WriteLine("                         #############                       ", ConsoleColor.Yellow, ConsoleColor.Black);
@@ -956,6 +990,11 @@ namespace MohawkTerminalGame
             Terminal.WriteLine("                      ####+ #######  ####;                   ", ConsoleColor.Yellow, ConsoleColor.Black);
             Terminal.WriteLine("                        ###############.                     ", ConsoleColor.Yellow, ConsoleColor.Black);
             Terminal.WriteLine("                            #######;                         ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("                                                             ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("                                                             ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("                                                             ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("                                                             ", ConsoleColor.Yellow, ConsoleColor.Black);
+            Terminal.WriteLine("                                                             ", ConsoleColor.Yellow, ConsoleColor.Black);
             Terminal.WriteLine("                                                             ", ConsoleColor.Yellow, ConsoleColor.Black);
             Terminal.WriteLine("                                                             ", ConsoleColor.Yellow, ConsoleColor.Black);
 
